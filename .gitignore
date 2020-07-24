@@ -12,7 +12,11 @@
 # Terraform directory
 .terraform/
 terraform.tfstate.d/
-logs/ 
+logs/
+terraform.tfstate
+
+# Terraform local files
+ dev-file.txt
 
 # Terraform log file
 crash.log
