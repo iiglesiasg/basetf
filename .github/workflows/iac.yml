@@ -84,16 +84,21 @@
         - name: 'listar todos los ficheros a llevarme (identificar directorios recursivos)'
           run: |
             cd iac/environments/
+            > changesfile.txt
             arr=($env.$FILES_COMMITTED)
             for i in "${arr[@]}"
               do
-                echo "estamos en: $i"
+                echo "ABP: estamos en: $i"
                 #cogemos solo el path de los ficheros
                 idirname="${i%/*}"
-                echo "idirname es $idirname"
+                echo "ABP: idirname es $idirname"
                 # y buscamos todos los ficheros que estén bajo esa ruta para meterlos en en fichero de texto
                 find $idirname -type f -exec du -h {} + | sort -n -r >>changesfile.txt
                 #despues al fichero de texto le eliminamos los duplicados y voilá, la lista de ficheros a copiar al repo2
+                echo "ABP: antes de eliminar duplicados"
+                cat changesfile.txt
+                sort changesfile.txt | uniq -u
+                echo "ABP: despues de eliminar duplicados"
                 cat changesfile.txt
               done
             exit 111
