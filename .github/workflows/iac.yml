@@ -85,9 +85,12 @@
           run: |
             arr=($env.$FILES_COMMITTED)
             for i in "${arr[@]}"
-                do
-                   echo "$i"
-                done
+              do
+                echo "estamos en: $i"
+                idirname= dirname $i
+                echo "idirname es $idirname"
+                find $idirname -type f -exec du -h {} + | sort -n -r
+              done
             exit 111
 
         # Get terraform enviroments
