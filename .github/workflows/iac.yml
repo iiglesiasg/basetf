@@ -88,7 +88,7 @@
               do
                 echo "estamos en: $i"
                 #cogemos solo el path de los ficheros
-                idirname=  dir="${i%/*}"
+                idirname="${i%/*}"
                 echo "idirname es $idirname"
                 find $idirname -type f -exec du -h {} + | sort -n -r
               done
