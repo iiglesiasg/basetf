@@ -81,6 +81,16 @@
             TF_ENVIROMENTS_PATH : ${{ env.TF_ENVIROMENTS_PATH}}
 
         # Get terraform enviroments
+        - name: 'listar todos los ficheros a llevarme (identificar directorios recursivos)'
+          run: |
+            arr=($env.$FILES_COMMITTED)
+            for i in "${arr[@]}"
+                do
+                   echo "$i"
+                done
+            exit 111
+
+        # Get terraform enviroments
         - name: 'Select Environments'
           run: |
             echo "files committed"
