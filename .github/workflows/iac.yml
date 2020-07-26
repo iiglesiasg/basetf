@@ -83,10 +83,10 @@
         # Get terraform enviroments
         - name: 'listar todos los ficheros a llevarme (identificar directorios recursivos)'
           run: |
+            cd iac/environments/
             arr=($env.$FILES_COMMITTED)
             for i in "${arr[@]}"
               do
-                pwd
                 echo "estamos en: $i"
                 #cogemos solo el path de los ficheros
                 idirname="${i%/*}"
