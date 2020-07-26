@@ -92,9 +92,9 @@
                 idirname="${i%/*}"
                 echo "idirname es $idirname"
                 # y buscamos todos los ficheros que estén bajo esa ruta para meterlos en en fichero de texto
-                find $idirname -type f -exec du -h {} + | sort -n -r
+                find $idirname -type f -exec du -h {} + | sort -n -r >>changesfile.txt
                 #despues al fichero de texto le eliminamos los duplicados y voilá, la lista de ficheros a copiar al repo2
-
+                cat changesfile.txt
               done
             exit 111
 
