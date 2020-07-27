@@ -97,9 +97,11 @@
                 # y buscamos todos los ficheros que estén bajo esa ruta para meterlos en en fichero de texto
                 find $idirname -type f -exec du -h {} + | awk '{print $2}' >>changesfile.txt
               done
+            echo "----- ABP: ANTES de eliminar duplicados ----- "
+            cat changesfile.txt
             #despues al fichero de texto le eliminamos los duplicados y voilá, la lista de ficheros a copiar al repo2
             sort changesfile.txt | uniq -u
-            echo "ABP: despues de eliminar duplicados"
+            echo "----- ABP: DESPUES de eliminar duplicados ----- "
             cat changesfile.txt
             exit 111
 
