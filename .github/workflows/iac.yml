@@ -87,9 +87,10 @@
             > changesfile.txt
             cat changesfile.txt
             echo "files commited tiene ${{ env.FILES_COMMITTED }}"
-            arr=${{ env.FILES_COMMITTED }}
-            echo "arr contiene: $arr"
-            for i in "${arr[@]}"
+            MY_ARR=', ' read -r -a array <<< "${{ env.FILES_COMMITTED }}"
+            #arr=${{ env.FILES_COMMITTED }}
+            echo "MY_ARR contiene: $MY_ARR"
+            for i in "${MY_ARR[@]}"
               do
                 echo "ABP: estamos en: $i"
                 #cogemos solo el path de los ficheros
