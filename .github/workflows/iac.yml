@@ -101,10 +101,15 @@
             #despues al fichero de texto loo ordenamos y eliminamos los duplicados y voilá, la lista de ficheros a copiar al repo2
             FILES_TO_COPY=$(sort changesfile.txt | uniq -u -i)
             echo ::set-env name=FILES_TO_COPY::${FILES_TO_COPY}
+
+
+
+ # Get terraform enviroments
+        - name: 'Select Environments'
+          run: |
+            echo "files to copy"
+            echo ${{ env.FILES_TO_COPY }}
             exit 111
-
-        # copy permutations to deployment repo
-
 
         # Config of: terraform backend (tfstate store) and resource destination
         - name: 'Select Terraform Backend and Landing'
