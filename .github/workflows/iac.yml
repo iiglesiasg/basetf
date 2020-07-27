@@ -97,19 +97,10 @@
                 # y buscamos todos los ficheros que estén bajo esa ruta para meterlos en en fichero de texto
                 find $idirname -type f -exec du -h {} + | awk '{print $2}' >>changesfile.txt
               done
-            echo "----- ABP: ANTES de eliminar duplicados ----- "
-            cat changesfile.txt
-            #despues al fichero de texto le eliminamos los duplicados y voilá, la lista de ficheros a copiar al repo2
-            sort changesfile.txt | uniq -u
-            echo "----- ABP: DESPUES de eliminar duplicados ----- "
-            cat changesfile.txt
-            exit 111
 
-        # Get terraform enviroments
-        - name: 'Select Environments'
-          run: |
-            echo "files committed"
-            echo ${{ env.FILES_COMMITTED }}
+            #despues al fichero de texto loo ordenamos y eliminamos los duplicados y voilá, la lista de ficheros a copiar al repo2
+            FILES_TO_COPY=$(sort changesfile.txt | uniq -u -i)
+            echo ::set-env name=FILES_TO_COPY::${FILES_TO_COPY}
             exit 111
 
         # copy permutations to deployment repo
