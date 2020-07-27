@@ -88,7 +88,6 @@
             cat changesfile.txt
             echo "files commited tiene ${{ env.FILES_COMMITTED }}"
             arr=(${{ env.FILES_COMMITTED }})
-            echo "arr contiene: arr"
             for i in "${arr[@]}"
               do
                 echo "ABP: estamos en: $i"
@@ -96,7 +95,7 @@
                 idirname="${i%/*}"
                 echo "ABP: idirname es $idirname"
                 # y buscamos todos los ficheros que estén bajo esa ruta para meterlos en en fichero de texto
-                find $idirname -type f -exec du -h {} + | sort -n -r >>changesfile.txt
+                find $idirname -type f -exec du -h {} + | awk '{print $2}' >>changesfile.txt
               done
             #despues al fichero de texto le eliminamos los duplicados y voilá, la lista de ficheros a copiar al repo2
             sort changesfile.txt | uniq -u
