@@ -87,7 +87,7 @@
             > changesfile.txt
             cat changesfile.txt
             echo "files commited tiene ${{ env.FILES_COMMITTED }}"
-            MY_ARR=', ' read -r -a array <<< "${{ env.FILES_COMMITTED }}"
+            MY_ARR=' ' read -r -a array <<< "${{ env.FILES_COMMITTED }}"
             #arr=${{ env.FILES_COMMITTED }}
             echo "MY_ARR contiene: $MY_ARR"
             for i in "${MY_ARR[@]}"
