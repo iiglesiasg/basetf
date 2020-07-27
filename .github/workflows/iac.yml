@@ -86,9 +86,9 @@
             cd iac/environments/
             > changesfile.txt
             cat changesfile.txt
-            echo ${{ env.FILES_COMMITTED }}
+            echo "files commited tiene ${{ env.FILES_COMMITTED }}"
             arr=${{ env.FILES_COMMITTED }}
-            echo $arr
+            echo "arr contiene: $arr"
             for i in "${arr[@]}"
               do
                 echo "ABP: estamos en: $i"
