@@ -75,7 +75,7 @@
             export COMMIT_ID_BEFORE=$(jq .before $GITHUB_EVENT_PATH --raw-output)
             #echo "FILES_COMMITTED"
             FILES_COMMITTED=$(git diff --name-only $COMMIT_ID_CURRENT $COMMIT_ID_BEFORE|sort|uniq|grep -i ${TF_ENVIROMENTS_PATH}|awk -F${TF_ENVIROMENTS_PATH} '{ print $2 }')
-            #echo $FILES_COMMITTED
+            echo $FILES_COMMITTED
             echo ::set-env name=FILES_COMMITTED::${FILES_COMMITTED}
           env:
             TF_ENVIROMENTS_PATH : ${{ env.TF_ENVIROMENTS_PATH}}
@@ -94,13 +94,11 @@
                 echo "ABP: idirname es $idirname"
                 # y buscamos todos los ficheros que estén bajo esa ruta para meterlos en en fichero de texto
                 find $idirname -type f -exec du -h {} + | sort -n -r >>changesfile.txt
-                #despues al fichero de texto le eliminamos los duplicados y voilá, la lista de ficheros a copiar al repo2
-                echo "ABP: antes de eliminar duplicados"
-                cat changesfile.txt
-                sort changesfile.txt | uniq -u
-                echo "ABP: despues de eliminar duplicados"
-                cat changesfile.txt
               done
+            #despues al fichero de texto le eliminamos los duplicados y voilá, la lista de ficheros a copiar al repo2
+            sort changesfile.txt | uniq -u
+            echo "ABP: despues de eliminar duplicados"
+            cat changesfile.txt
             exit 111
 
         # Get terraform enviroments
