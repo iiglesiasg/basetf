@@ -102,8 +102,6 @@
             FILES_TO_COPY=$(sort changesfile.txt | uniq -u -i)
             echo ::set-env name=FILES_TO_COPY::${FILES_TO_COPY}
 
-
-
  # Get terraform enviroments
         - name: 'Copy files to deploy repo'
           run: |
@@ -127,6 +125,7 @@
 
             cd basetfdeploy
             echo ${{ env.FILES_TO_COPY }} >> README.md
+            ls - a >> prueba.txt
             git add .
             git commit --message "Update from github action"
             git push origin master
