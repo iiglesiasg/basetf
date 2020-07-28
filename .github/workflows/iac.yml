@@ -108,9 +108,9 @@
         - name: 'Copy files to deploy repo'
           run: |
 
-            USER_EMAIL = "aitorbalbas@gmail.com"
-            GITHUB_USERNAME = "aitorbalbas"
-            GITHUB_REPO = "basetfdeploy"
+            USER_EMAIL="aitorbalbas@gmail.com"
+            GITHUB_USERNAME="aitorbalbas"
+            GITHUB_REPO="basetfdeploy"
 
             echo "files to copy"
             echo ${{ env.FILES_TO_COPY }}
