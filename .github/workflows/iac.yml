@@ -110,10 +110,8 @@
         - name: 'identify files to copy to deploy repo 32'
           run: |
             cd iac/environments/
-
             > changesfile.txt
-            > environments.txt
-           #get the commited files and set an array with them
+            #get the commited files and set an array with them
             arr=(${{ env.FILES_COMMITTED }})
             #iterate the files commited elements lookig to identify wich environments are affected
             for i in "${arr[@]}"
