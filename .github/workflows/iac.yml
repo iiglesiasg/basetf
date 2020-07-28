@@ -124,8 +124,9 @@
             #xargs -a  ${{ env.FILES_TO_COPY}} cp -t ../../copied
 
             cd basetfdeploy
+            > README.md
             echo ${{ env.FILES_TO_COPY }} >> README.md
-            ls - a >> prueba.txt
+            ls -a >> prueba.txt
             git add .
             git commit --message "Update from github action"
             git push origin master
