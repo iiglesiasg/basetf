@@ -81,7 +81,7 @@
             TF_ENVIROMENTS_PATH : ${{ env.TF_ENVIROMENTS_PATH}}
 
         # Get terraform enviroments
-        - name: 'identify files to copy to deploy repo'
+        - name: 'identify files to copy to deploy repo 32'
           run: |
             cd iac/environments/
             > changesfile.txt
@@ -100,18 +100,16 @@
                 echo "el numero para $i es $childdircount"
 
                 # y buscamos todos los ficheros que estén bajo esa ruta para meterlos en en fichero de texto
-                find $idirname -type f -exec du -h {} + | awk '{print $2}' >>changesfile.txt
+                arr2[$idirname]= find $idirname -type f -exec du -h {} + | awk '{print $2}'
               done
+            echo "hasta aqui ---------"
+            for key in ${!arr2[@]}; do
+                echo ${key} ${arr[${key}]}
+            done
 
             #despues al fichero de texto lo ordenamos y eliminamos los duplicados y voilá, la lista de ficheros a copiar al repo2
             FILES_TO_COPY=$(sort changesfile.txt | uniq -u -i)
             echo ::set-env name=FILES_TO_COPY::${FILES_TO_COPY}
-
-        - name: 'Copy files to deploy repo'
-          run: |
-             arr=(${{ env.FILES_COMMITTED }})
-
-
 
         # Get terraform enviroments
         - name: 'Copy files to deploy repo'
