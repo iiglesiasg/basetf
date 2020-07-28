@@ -98,7 +98,8 @@
 
                 childdircount=$(find $idirname -maxdepth 1 -type d | wc -l)
                 echo "el numero para $i es $childdircount"
-                arr2[$idirname]=($(find $idirname -type f -exec du -h {} + | awk '{print $2}'))
+                FICHEROS=$(find $idirname -type f -exec du -h {} + | awk '{print $2}')
+                arr2[$idirname]=$FICHEROS
 
               done
             echo "hasta aqui ---------"
