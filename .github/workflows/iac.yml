@@ -99,20 +99,19 @@
                 childdircount=$(find $idirname -maxdepth 1 -type d | wc -l)
                 echo "el numero para $i es $childdircount"
                 FICHEROS=$(find $idirname -type f -exec du -h {} + | awk '{print $2}')
-                echo "ficheros es $FICHEROS"
-                arr2[$idirname]= "$FICHEROS"
+
+                for key in "${FICHEROS[@]}"
+                  do
+                    echo "---ahora le toca a $key"
+                  done
 
               done
             echo "hasta aqui ---------"
-            for key in ${arr2[@]};
-              do
-                echo ${key} ${arr[${key}]}
-              done
-            echo "hasta aqui2 ---------"
+
 
             #despues al fichero de texto lo ordenamos y eliminamos los duplicados y voilá, la lista de ficheros a copiar al repo2
-            FILES_TO_COPY=$(sort changesfile.txt | uniq -u -i)
-            echo ::set-env name=FILES_TO_COPY::${FILES_TO_COPY}
+            #FILES_TO_COPY=$(sort changesfile.txt | uniq -u -i)
+            #echo ::set-env name=FILES_TO_COPY::${FILES_TO_COPY}
 
         # Get terraform enviroments
         - name: 'Copy files to deploy repo'
