@@ -81,7 +81,7 @@
             TF_ENVIROMENTS_PATH : ${{ env.TF_ENVIROMENTS_PATH}}
 
         # Get terraform enviroments
-        - name: 'listar todos los ficheros a llevarme (identificar directorios recursivos)'
+        - name: 'identify files to copy to deploy repo'
           run: |
             cd iac/environments/
             > changesfile.txt
@@ -105,10 +105,35 @@
 
 
  # Get terraform enviroments
-        - name: 'Select Environments'
+        - name: 'Copy files to deploy repo'
           run: |
+
+            USER_EMAIL = "aitorbalbas@gmail.com"
+            GITHUB_USERNAME = "aitorbalbas"
+            GITHUB_REPO = "basetfdeploy"
+
             echo "files to copy"
             echo ${{ env.FILES_TO_COPY }}
+
+            git config --global user.email "$USER_EMAIL"
+            git config --global user.name "$GITHUB_USERNAME"
+
+            # Copy files into the git and deletes all git
+            #find "$CLONE_DIR" | grep -v "^$CLONE_DIR/\.git" | grep -v "^$CLONE_DIR$" | xargs rm -rf # delete all files (to handle deletions)
+            # cp -r "$FOLDER"/* "$CLONE_DIR"
+
+            pwd
+            git clone "https://${{secrets.ABP_PERSONAL_TOKEN}}@github.com/$GITHUB_USERNAME/$GITHUB_REPO.git"
+            ls -a
+
+            cd iac/environments/
+
+            #xargs -a  ${{ env.FILES_TO_COPY}} cp -t ../../copied
+
+            #git add .
+            #git commit --message "Update from github action"
+            #git push origin master
+
             exit 111
 
         # Config of: terraform backend (tfstate store) and resource destination
