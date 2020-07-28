@@ -131,7 +131,7 @@
                   echo "-----ABP:El cambio solo afecta al entorno $idirname"
                   #copiamos el fichero a la carpeta auxiliar
                   mkdir -p "../../aux/$idirname" && cp "$i" "$_"
-                  cd ../../aux
+                  cd ../../aux/b1/b11
                   ls -a
                 fi
               done
