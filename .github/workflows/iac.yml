@@ -100,7 +100,7 @@
                 echo "el numero para $i es $childdircount"
                 FICHEROS=$(find $idirname -type f -exec du -h {} + | awk '{print $2}')
 
-                echo ${#FICHEROS[@]}"
+                echo "${#FICHEROS[@]}"
 
 
               done
