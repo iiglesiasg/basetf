@@ -88,21 +88,32 @@
             cat changesfile.txt
             echo "files commited tiene ${{ env.FILES_COMMITTED }}"
             arr=(${{ env.FILES_COMMITTED }})
+            declare -A arr2
             for i in "${arr[@]}"
               do
                 echo "ABP: estamos en: $i"
                 #cogemos solo el path de los ficheros
                 idirname="${i%/*}"
                 echo "ABP: idirname es $idirname"
+
+                childdircount=$(find $idirname -maxdepth 1 -type d | wc -l)
+                echo "el numero para $i es $childdircount"
+
                 # y buscamos todos los ficheros que estén bajo esa ruta para meterlos en en fichero de texto
                 find $idirname -type f -exec du -h {} + | awk '{print $2}' >>changesfile.txt
               done
 
-            #despues al fichero de texto loo ordenamos y eliminamos los duplicados y voilá, la lista de ficheros a copiar al repo2
+            #despues al fichero de texto lo ordenamos y eliminamos los duplicados y voilá, la lista de ficheros a copiar al repo2
             FILES_TO_COPY=$(sort changesfile.txt | uniq -u -i)
             echo ::set-env name=FILES_TO_COPY::${FILES_TO_COPY}
 
- # Get terraform enviroments
+        - name: 'Copy files to deploy repo'
+          run: |
+             arr=(${{ env.FILES_COMMITTED }})
+
+
+
+        # Get terraform enviroments
         - name: 'Copy files to deploy repo'
           run: |
 
