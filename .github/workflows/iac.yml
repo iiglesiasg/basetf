@@ -123,7 +123,7 @@
                 # count how many files are under this path,, if more than one, the commit affects many environments
                 childdircount=$(find $idirname -maxdepth 1 -type d | wc -l)
                 echo "el numero para $i es $childdircount"
-                if [[$childdircount -gt 1]]
+                if [$childdircount -gt 1]
                 then
                   FICHEROS=$(find $idirname -type f ! -name '*mem*.txt' -exec du -h {} + | awk '{print $2}')
                   echo "El cambio solo afecta a estos ficheros: $FICHEROS"
