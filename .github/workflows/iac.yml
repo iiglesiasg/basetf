@@ -100,8 +100,8 @@
                 echo "el numero para $i es $childdircount"
 
                 # y buscamos todos los ficheros que estén bajo esa ruta para meterlos en en fichero de texto
-                FICHEROS_HIJOS=$(find $idirname -type f -exec du -h {} + | awk '{print $2}')
-                #arr2[$idirname]=($FICHEROS_HIJOS)
+                find $idirname -type f -exec du -h {} + | awk '{print $2}' >>changesfile.txt
+                #arr2[$idirname]=($(cat changesfile.txt))
               done
             echo "hasta aqui ---------"
             for key in ${arr2[@]};
