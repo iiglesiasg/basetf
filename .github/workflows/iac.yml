@@ -116,22 +116,22 @@
             #iterate the files commited elements lookig to identify wich environments are affected
             for i in "${arr[@]}"
               do
-                echo "ABP: estamos en: $i"
+                echo "-----ABP: estamos en: $i"
                 #cogemos solo el path de los ficheros
                 idirname="${i%/*}"
-                echo "ABP: idirname es $idirname"
+                echo "-----ABP: idirname es $idirname"
                 # count how many files are under this path,if more than one, the commit affects many environments
                 childdircount=$(find $idirname -maxdepth 1 -type d | wc -l)
-                echo "el numero para $i es $childdircount"
+                echo "-----ABP:el numero para $i es $childdircount"
                 if [ $((childdircount - 1)) -gt 0 ]
                 then
                   FICHEROS=$(find $idirname -type f ! -path '$i')
-                  echo "El cambio afecta a estos ficheros: $FICHEROS"
+                  echo "-----ABP:El cambio afecta a estos ficheros: $FICHEROS"
                 else
-                  echo "El cambio solo afecta al fichero $i"
+                  echo "-----ABP:El cambio solo afecta al fichero $i"
                 fi
               done
-            echo "hasta aqui ---------"
+            echo "-----ABP:hasta aqui ---------"
 
 
             #despues al fichero de texto lo ordenamos y eliminamos los duplicados y voilá, la lista de ficheros a copiar al repo2
