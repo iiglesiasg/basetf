@@ -126,7 +126,9 @@
             git clone "https://${{secrets.ABP_PERSONAL_TOKEN}}@github.com/$GITHUB_USERNAME/$GITHUB_REPO.git"
             ls -a
 
-            cd iac/environments/
+            #cd iac/environments/
+            cd basetfdeploy
+            cat README.md
 
             #xargs -a  ${{ env.FILES_TO_COPY}} cp -t ../../copied
 
