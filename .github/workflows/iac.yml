@@ -103,9 +103,11 @@
                 arr2[$idirname]= find $idirname -type f -exec du -h {} + | awk '{print $2}'
               done
             echo "hasta aqui ---------"
-            for key in ${!arr2[@]}; do
+            for key in ${arr2[@]};
+              do
                 echo ${key} ${arr[${key}]}
-            done
+              done
+            echo "hasta aqui2 ---------"
 
             #despues al fichero de texto lo ordenamos y eliminamos los duplicados y voilá, la lista de ficheros a copiar al repo2
             FILES_TO_COPY=$(sort changesfile.txt | uniq -u -i)
