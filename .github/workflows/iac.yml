@@ -125,10 +125,10 @@
                 echo "-----ABP:el numero para $i es $childdircount"
                 if [ $((childdircount - 1)) -gt 0 ]
                 then
-                  FICHEROS=$(find $idirname -type f ! -path '$i')
-                  echo "-----ABP:El cambio afecta a estos ficheros: $FICHEROS"
+                  ENTORNOS=$(find $idirname -type d ! -path '$idirname')
+                  echo "-----ABP:El cambio afecta a estos entornos: $ENTORNOS"
                 else
-                  echo "-----ABP:El cambio solo afecta al fichero $i"
+                  echo "-----ABP:El cambio solo afecta al entorno $idirname"
                 fi
               done
             echo "-----ABP:hasta aqui ---------"
