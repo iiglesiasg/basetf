@@ -129,6 +129,10 @@
                   echo "-----ABP:El cambio afecta a estos entornos: $ENTORNOS"
                 else
                   echo "-----ABP:El cambio solo afecta al entorno $idirname"
+                  #copiamos el fichero a la carpeta auxiliar
+                  cp $i "../../aux/$i"
+                  cd ../../aux
+                  ls -a
                 fi
               done
             echo "-----ABP:hasta aqui ---------"
