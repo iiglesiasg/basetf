@@ -120,14 +120,12 @@ jobs:
       # Get terraform enviroments
       - name: 'Copy files to deploy repo'
         run: |
-
           USER_EMAIL="aitorbalbas@gmail.com"
           GITHUB_USERNAME="aitorbalbas"
           GITHUB_REPO="basetfdeploy"
 
           git config --global user.email "$USER_EMAIL"
           git config --global user.name "$GITHUB_USERNAME"
-
           git clone "https://${{secrets.ABP_PERSONAL_TOKEN}}@github.com/$GITHUB_USERNAME/$GITHUB_REPO.git"
 
           # Copy files into the git and deletes all git
@@ -135,19 +133,17 @@ jobs:
           # cp -r "$FOLDER"/* "$CLONE_DIR"
 
           ls -a
-
           #cd iac/environments/
           #xargs -a  ${{ env.FILES_TO_COPY}} cp -t ../../copied
-
           cd basetfdeploy
           > README.md
           echo ${{ env.FILES_TO_COPY }} >> README.md
           ls -a >> prueba.txt
           git add .
           git commit --message "Update from github action"
-      working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
+        working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
 
-        - name: Create Pull Request
+          - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
@@ -175,9 +171,9 @@ jobs:
           draft: false
 
 
-  - name: 'Salir'
-          run: |
-          exit 111
+    - name: 'Salir'
+        run: |
+        exit 111
 
         # Config of: terraform backend (tfstate store) and resource destination
         - name: 'Select Terraform Backend and Landing'
