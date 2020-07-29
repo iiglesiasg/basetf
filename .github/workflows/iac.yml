@@ -128,7 +128,6 @@ jobs:
         run: |
             pwd
             ls -a
-            cd basetfdeploy
             > pepe.txt
             echo "hola mi primera PR" >> pepe.txt
             git add .
