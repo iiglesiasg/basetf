@@ -3,8 +3,8 @@ name: IaC Workflow
 
 on:
   push:
-    # Validate: all branches
-    # Apply: master
+    branches:
+      - master
     paths:
       - "iac/**"
   pull_request:
@@ -127,6 +127,7 @@ jobs:
           git config --global user.email "$USER_EMAIL"
           git config --global user.name "$GITHUB_USERNAME"
           git clone "https://${{secrets.ABP_PERSONAL_TOKEN}}@github.com/$GITHUB_USERNAME/$GITHUB_REPO.git"
+          git checkout master
 
           # Copy files into the git and deletes all git
           #find "$CLONE_DIR" | grep -v "^$CLONE_DIR/\.git" | grep -v "^$CLONE_DIR$" | xargs rm -rf # delete all files (to handle deletions)
@@ -147,6 +148,7 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
+          ref: ${{ github.head_ref }}
           token: ${{ secrets.ABP_PERSONAL_TOKEN }}
           repository: aitorbalbas/basetfdeploy
           commit-message: Update report
