@@ -118,7 +118,7 @@ jobs:
         working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
 
       - name: 'Checkout the other Repo'
-          uses: actions/checkout@v2.3.1
+        uses: actions/checkout@v2.3.1
           with:
             ref: ${{ github.head_ref }}
             token: ${{ secrets.PAT }}
