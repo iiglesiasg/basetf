@@ -119,10 +119,10 @@ jobs:
 
       - name: 'Checkout the other Repo'
         uses: actions/checkout@v2.3.1
-          with:
-            ref: ${{ github.head_ref }}
-            token: ${{ secrets.PAT }}
-            repository: aitorbalbas/basetfdeploy
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.PAT }}
+          repository: aitorbalbas/basetfdeploy
 
       - name: 'Change somefile in the other repo'
         run: |
