@@ -1,177 +1,183 @@
 ---
-  name: IaC Workflow
+name: IaC Workflow
 
-  on:
-    push:
-      # Validate: all branches
-      # Apply: master
-      paths:
-        - "iac/**"
-    pull_request:
-      # Plan: master
-      branches:
-        - master
-      paths:
-        - "iac/environments/**"
+on:
+  push:
+    # Validate: all branches
+    # Apply: master
+    paths:
+      - "iac/**"
+  pull_request:
+    # Plan: master
+    branches:
+      - master
+    paths:
+      - "iac/environments/**"
 
-  env:
-    PROJECT_AUTO_TFVARS: 'project.auto.tfvars'
-    TF_WORKING_DIR: './iac'
-    TF_ACTION_VERSION: '0.12.28'
-    TF_ENVIROMENTS_PATH: 'environments/'
-    GITHUB_APPLY_MESSAGE_PATH: '.head_commit.message' ### push on master
-    GITHUB_PLAN_MESSAGE_PATH: '.pull_request.title' ### pull request on master
-    GITHUB_VALIDATE_MESSAGE_PATH: '.commits[-1].message' ### push on any branch
+env:
+  PROJECT_AUTO_TFVARS: 'project.auto.tfvars'
+  TF_WORKING_DIR: './iac'
+  ENVIRONMENTS_WORKING_DIR: './iac/environments/'
+  TF_ACTION_VERSION: '0.12.28'
+  TF_ENVIROMENTS_PATH: 'environments/'
+  GITHUB_APPLY_MESSAGE_PATH: '.head_commit.message' ### push on master
+  GITHUB_PLAN_MESSAGE_PATH: '.pull_request.title' ### pull request on master
+  GITHUB_VALIDATE_MESSAGE_PATH: '.commits[-1].message' ### push on any branch
 
-  jobs:
-    validate_terraform:
-      name: Terraform
-      ## no latest!!!
-      runs-on: ubuntu-latest
+jobs:
+  validate_terraform:
+    name: Terraform
+    ## no latest!!!
+    runs-on: ubuntu-latest
 
-      steps:
+    steps:
 
-        - name: 'Checkout Repo'
-          uses: actions/checkout@v2.3.1
-          with:
-            # get all commits -- diff among pushes to master
-            fetch-depth: 0
+      - name: 'Checkout Repo'
+        uses: actions/checkout@v2.3.1
+        with:
+          # get all commits -- diff among pushes to master
+          fetch-depth: 0
 
-        # # Push on any branch
-        # - name: 'Commit Message -- Terraform Validate'
-        #   if: ${{ github.ref != 'refs/heads/master' }}
-        #   run: |
-        #     export GITHUB_MESSAGE_PATH=${{ env.GITHUB_VALIDATE_MESSAGE_PATH }} && echo $GITHUB_MESSAGE_PATH
-        #     echo ::set-env name=GITHUB_MESSAGE_PATH::${GITHUB_MESSAGE_PATH}
-        # # Pull request on master
-        # - name: 'Commit Message -- Terraform Plan'
-        #   if: ${{ github.event_name == 'pull_request' }}
-        #   run: |
-        #     export GITHUB_MESSAGE_PATH=${{ env.GITHUB_PLAN_MESSAGE_PATH }} && echo $GITHUB_MESSAGE_PATH
-        #     echo ::set-env name=GITHUB_MESSAGE_PATH::${GITHUB_MESSAGE_PATH}
-        # # Push on master
-        # - name: 'Commit Message -- Terraform Apply'
-        #   if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-        #   run: |
-        #     export GITHUB_MESSAGE_PATH=${{ env.GITHUB_VALIDATE_MESSAGE_PATH }} && echo $GITHUB_MESSAGE_PATH
-        #     echo ::set-env name=GITHUB_MESSAGE_PATH::${GITHUB_MESSAGE_PATH}
+      # # Push on any branch
+      # - name: 'Commit Message -- Terraform Validate'
+      #   if: ${{ github.ref != 'refs/heads/master' }}
+      #   run: |
+      #     export GITHUB_MESSAGE_PATH=${{ env.GITHUB_VALIDATE_MESSAGE_PATH }} && echo $GITHUB_MESSAGE_PATH
+      #     echo ::set-env name=GITHUB_MESSAGE_PATH::${GITHUB_MESSAGE_PATH}
+      # # Pull request on master
+      # - name: 'Commit Message -- Terraform Plan'
+      #   if: ${{ github.event_name == 'pull_request' }}
+      #   run: |
+      #     export GITHUB_MESSAGE_PATH=${{ env.GITHUB_PLAN_MESSAGE_PATH }} && echo $GITHUB_MESSAGE_PATH
+      #     echo ::set-env name=GITHUB_MESSAGE_PATH::${GITHUB_MESSAGE_PATH}
+      # # Push on master
+      # - name: 'Commit Message -- Terraform Apply'
+      #   if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+      #   run: |
+      #     export GITHUB_MESSAGE_PATH=${{ env.GITHUB_VALIDATE_MESSAGE_PATH }} && echo $GITHUB_MESSAGE_PATH
+      #     echo ::set-env name=GITHUB_MESSAGE_PATH::${GITHUB_MESSAGE_PATH}
 
-        # # Based on commit message deploy on (environment)
-        # - name: 'Select Environment on Commit Message'
-        #   run: |
-        #     # Get enviroment info head commit: "i.e.: (dev) this is the message"
-        #     export ENVIRONMENT_COMMIT_MESSAGE=$(jq ${{ env.GITHUB_MESSAGE_PATH }} $GITHUB_EVENT_PATH --raw-output | awk -F '[()]' '{print $(NR+1)}')
-        #     echo "Commit message: $(jq ${{ env.GITHUB_MESSAGE_PATH }} $GITHUB_EVENT_PATH --raw-output)"
-        #     echo "Environment: $ENVIRONMENT_COMMIT_MESSAGE"
-        #     # Check if the environments path contains the environment set in the commited message
-        #     if ([[ ! -d "${{ env.TF_ENVIROMENTS_PATH }}$ENVIRONMENT_COMMIT_MESSAGE" ]] || [[ -z "$ENVIRONMENT_COMMIT_MESSAGE" ]]); then echo "ERROR: Wrong environment provided (usage: i.e.: (dev) commit message)"; exit 1 ; fi
-        #     echo ::set-env name=Environment_Commited::${ENVIRONMENT_COMMIT_MESSAGE}
-        #   working-directory: ${{ env.TF_WORKING_DIR}}
+      # # Based on commit message deploy on (environment)
+      # - name: 'Select Environment on Commit Message'
+      #   run: |
+      #     # Get enviroment info head commit: "i.e.: (dev) this is the message"
+      #     export ENVIRONMENT_COMMIT_MESSAGE=$(jq ${{ env.GITHUB_MESSAGE_PATH }} $GITHUB_EVENT_PATH --raw-output | awk -F '[()]' '{print $(NR+1)}')
+      #     echo "Commit message: $(jq ${{ env.GITHUB_MESSAGE_PATH }} $GITHUB_EVENT_PATH --raw-output)"
+      #     echo "Environment: $ENVIRONMENT_COMMIT_MESSAGE"
+      #     # Check if the environments path contains the environment set in the commited message
+      #     if ([[ ! -d "${{ env.TF_ENVIROMENTS_PATH }}$ENVIRONMENT_COMMIT_MESSAGE" ]] || [[ -z "$ENVIRONMENT_COMMIT_MESSAGE" ]]); then echo "ERROR: Wrong environment provided (usage: i.e.: (dev) commit message)"; exit 1 ; fi
+      #     echo ::set-env name=Environment_Commited::${ENVIRONMENT_COMMIT_MESSAGE}
+      #   working-directory: ${{ env.TF_WORKING_DIR}}
 
-        # Get files commited
-        - name: 'Get files commited between two pushes (1+ commits)'
+      # Get files commited
+      - name: 'Get files commited between two pushes (1+ commits)'
+        run: |
+          export COMMIT_ID_CURRENT=$(jq .after $GITHUB_EVENT_PATH --raw-output)
+          export COMMIT_ID_BEFORE=$(jq .before $GITHUB_EVENT_PATH --raw-output)
+          #echo "FILES_COMMITTED"
+          FILES_COMMITTED=$(git diff --name-only $COMMIT_ID_CURRENT $COMMIT_ID_BEFORE|sort|uniq|grep -i ${TF_ENVIROMENTS_PATH}|awk -F${TF_ENVIROMENTS_PATH} '{ print $2 }')
+          echo $FILES_COMMITTED
+          echo ::set-env name=FILES_COMMITTED::${FILES_COMMITTED}
+        env:
+          TF_ENVIROMENTS_PATH: ${{ env.TF_ENVIROMENTS_PATH}}
+
+      # Get terraform enviroments
+      - name: 'identify files to copy to deploy repo 32'
+        run: |
+          > entornos.txt
+          #get the commited files and set an array with them
+          arr=(${{ env.FILES_COMMITTED }})
+          #iterate the files commited elements lookig to identify wich environments are affected
+          for i in "${arr[@]}"
+            do
+              echo "-----ABP: estamos en: $i"
+              #cogemos solo el path de los ficheros
+              idirname="${i%/*}"
+              echo "-----ABP: idirname es $idirname"
+              # count how many files are under this path,if more than one, the commit affects many environments
+              childdircount=$(find $idirname -maxdepth 1 -type d | wc -l)
+              echo "-----ABP:el numero para $i es $childdircount"
+              if [ $((childdircount - 1)) -gt 0 ]
+              then
+                ENTORNOS=$(find $idirname -type d ! -path '$idirname')
+                echo "-----ABP:El cambio afecta a estos entornos: $ENTORNOS"
+                # AITOR PENDIENTE DE ALGORINTMO DE COPIADO FLATTEN
+                #arr2=($ENTORNOS)
+                #for ent in "${arr2[@]}"
+                 #do
+                   #mkdir -p "../../auxenv/$idirname" && cp "$i" "$_"
+                 #done
+              else
+                echo "-----ABP:El cambio solo afecta al entorno $idirname"
+                #copiamos el fichero a la carpeta auxiliar con la misma estructura de directorios
+                mkdir -p "../../auxenv/$idirname" && cp "$i" "$_"
+                echo $idirname >> entornos.txt
+              fi
+            done
+          echo "-----ABP:hasta aqui ---------"
+        working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
+
+      # Get terraform enviroments
+      - name: 'Copy files to deploy repo'
+        run: |
+
+          USER_EMAIL="aitorbalbas@gmail.com"
+          GITHUB_USERNAME="aitorbalbas"
+          GITHUB_REPO="basetfdeploy"
+
+          git config --global user.email "$USER_EMAIL"
+          git config --global user.name "$GITHUB_USERNAME"
+
+          git clone "https://${{secrets.ABP_PERSONAL_TOKEN}}@github.com/$GITHUB_USERNAME/$GITHUB_REPO.git"
+
+          # Copy files into the git and deletes all git
+          #find "$CLONE_DIR" | grep -v "^$CLONE_DIR/\.git" | grep -v "^$CLONE_DIR$" | xargs rm -rf # delete all files (to handle deletions)
+          # cp -r "$FOLDER"/* "$CLONE_DIR"
+
+          ls -a
+
+          #cd iac/environments/
+          #xargs -a  ${{ env.FILES_TO_COPY}} cp -t ../../copied
+
+          cd basetfdeploy
+          > README.md
+          echo ${{ env.FILES_TO_COPY }} >> README.md
+          ls -a >> prueba.txt
+          git add .
+          git commit --message "Update from github action"
+      working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
+
+        - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.ABP_PERSONAL_TOKEN }}
+          commit-message: Update report
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          branch: example-patches
+          title: '[Example] Update report'
+          body: |
+            Update report
+            - Updated with *today's* date
+            - Auto-generated by [create-pull-request][1]
+
+            [1]: https://github.com/peter-evans/create-pull-request
+          labels: |
+            report
+            automated pr
+          assignees: aitorbalbas
+          reviewers: aitorbalbas
+          team-reviewers: |
+            owners
+            maintainers
+          milestone: 1
+          draft: false
+
+
+  - name: 'Salir'
           run: |
-            export COMMIT_ID_CURRENT=$(jq .after $GITHUB_EVENT_PATH --raw-output)
-            export COMMIT_ID_BEFORE=$(jq .before $GITHUB_EVENT_PATH --raw-output)
-            #echo "FILES_COMMITTED"
-            FILES_COMMITTED=$(git diff --name-only $COMMIT_ID_CURRENT $COMMIT_ID_BEFORE|sort|uniq|grep -i ${TF_ENVIROMENTS_PATH}|awk -F${TF_ENVIROMENTS_PATH} '{ print $2 }')
-            echo $FILES_COMMITTED
-            echo ::set-env name=FILES_COMMITTED::${FILES_COMMITTED}
-          env:
-            TF_ENVIROMENTS_PATH : ${{ env.TF_ENVIROMENTS_PATH}}
-
-        # identify environments to apply changes
-        - name: 'identify environments'
-          run: |
-            cd iac/environments/
-            > changesfile.txt
-            cat changesfile.txt
-            echo "files commited tiene ${{ env.FILES_COMMITTED }}"
-            arr=(${{ env.FILES_COMMITTED }})
-            for i in "${arr[@]}"
-              do
-                echo "ABP: estamos en: $i"
-                #get only pathname (quit filename)
-                idirname="${i%/*}"
-                echo "idirname is $idirname"
-                # find all the files under this path
-                find $idirname -type f -exec du -h {} + | awk '{print $2}' >>changesfile.txt
-              done
-
-            #sort & erase duplicated file names
-            FILES_TO_EVALUATE=$(sort changesfile.txt | uniq -u -i)
-            echo ::set-env name=FILES_TO_EVALUATE::${FILES_TO_EVALUATE}
-
-
-
-
-
-        # Get terraform enviroments
-        - name: 'identify files to copy to deploy repo 32'
-          run: |
-            cd iac/environments/
-            > changesfile.txt
-            #get the commited files and set an array with them
-            arr=(${{ env.FILES_COMMITTED }})
-            #iterate the files commited elements lookig to identify wich environments are affected
-            for i in "${arr[@]}"
-              do
-                echo "-----ABP: estamos en: $i"
-                #cogemos solo el path de los ficheros
-                idirname="${i%/*}"
-                echo "-----ABP: idirname es $idirname"
-                # count how many files are under this path,if more than one, the commit affects many environments
-                childdircount=$(find $idirname -maxdepth 1 -type d | wc -l)
-                echo "-----ABP:el numero para $i es $childdircount"
-                if [ $((childdircount - 1)) -gt 0 ]
-                then
-                  ENTORNOS=$(find $idirname -type d ! -path '$idirname')
-                  echo "-----ABP:El cambio afecta a estos entornos: $ENTORNOS"
-                else
-                  echo "-----ABP:El cambio solo afecta al entorno $idirname"
-                  #copiamos el fichero a la carpeta auxiliar
-                  mkdir -p "../../aux/$idirname" && cp "$i" "$_"
-                fi
-              done
-            cd ../../aux/b1/b11/dev
-            ls -a
-            echo "-----ABP:hasta aqui ---------"
-
-
-            #despues al fichero de texto lo ordenamos y eliminamos los duplicados y voilá, la lista de ficheros a copiar al repo2
-            #FILES_TO_COPY=$(sort changesfile.txt | uniq -u -i)
-            #echo ::set-env name=FILES_TO_COPY::${FILES_TO_COPY}
-
-        # Get terraform enviroments
-        - name: 'Copy files to deploy repo'
-          run: |
-
-            USER_EMAIL="aitorbalbas@gmail.com"
-            GITHUB_USERNAME="aitorbalbas"
-            GITHUB_REPO="basetfdeploy"
-
-            git config --global user.email "$USER_EMAIL"
-            git config --global user.name "$GITHUB_USERNAME"
-
-            # Copy files into the git and deletes all git
-            #find "$CLONE_DIR" | grep -v "^$CLONE_DIR/\.git" | grep -v "^$CLONE_DIR$" | xargs rm -rf # delete all files (to handle deletions)
-            # cp -r "$FOLDER"/* "$CLONE_DIR"
-
-            git clone "https://${{secrets.ABP_PERSONAL_TOKEN}}@github.com/$GITHUB_USERNAME/$GITHUB_REPO.git"
-            ls -a
-
-            #cd iac/environments/
-            #xargs -a  ${{ env.FILES_TO_COPY}} cp -t ../../copied
-
-            cd basetfdeploy
-            > README.md
-            echo ${{ env.FILES_TO_COPY }} >> README.md
-            ls -a >> prueba.txt
-            git add .
-            git commit --message "Update from github action"
-            git push origin master
-
-            exit 111
+          exit 111
 
         # Config of: terraform backend (tfstate store) and resource destination
         - name: 'Select Terraform Backend and Landing'
@@ -189,18 +195,18 @@
             echo ::set-env name=PREFIX::${PREFIX}
           working-directory: ${{ env.TF_WORKING_DIR}}
           env:
-            ENVIROMENT_COMMITED : ${{ env.Environment_Commited }}
+            ENVIROMENT_COMMITED: ${{ env.Environment_Commited }}
             # github future: dynamic secret variable name ${{ secrets.AZ_TF_BACKEND_$VARIABLE }}
             # possible solution: get secrets from GITHUB API
-            AZ_TF_BACKEND_DEV : ${{ secrets.AZ_TF_BACKEND_DEV }}
-            AZ_TF_LANDING_DEV : ${{ secrets.AZ_TF_LANDING_DEV }}
-            TF_CLOUD_VARS_DEV : ${{ secrets.TF_CLOUD_VARS_DEV }}
-            AZ_TF_BACKEND_PRE : ${{ secrets.AZ_TF_BACKEND_PRE }}
-            AZ_TF_LANDING_PRE : ${{ secrets.AZ_TF_LANDING_PRE }}
-            TF_CLOUD_VARS_PRE : ${{ secrets.TF_CLOUD_VARS_PRE }}
-            AZ_TF_BACKEND_PRO : ${{ secrets.AZ_TF_BACKEND_PRO }}
-            AZ_TF_LANDING_PRO : ${{ secrets.AZ_TF_LANDING_PRO }}
-            TF_CLOUD_VARS_PRO : ${{ secrets.TF_CLOUD_VARS_PRO }}
+            AZ_TF_BACKEND_DEV: ${{ secrets.AZ_TF_BACKEND_DEV }}
+            AZ_TF_LANDING_DEV: ${{ secrets.AZ_TF_LANDING_DEV }}
+            TF_CLOUD_VARS_DEV: ${{ secrets.TF_CLOUD_VARS_DEV }}
+            AZ_TF_BACKEND_PRE: ${{ secrets.AZ_TF_BACKEND_PRE }}
+            AZ_TF_LANDING_PRE: ${{ secrets.AZ_TF_LANDING_PRE }}
+            TF_CLOUD_VARS_PRE: ${{ secrets.TF_CLOUD_VARS_PRE }}
+            AZ_TF_BACKEND_PRO: ${{ secrets.AZ_TF_BACKEND_PRO }}
+            AZ_TF_LANDING_PRO: ${{ secrets.AZ_TF_LANDING_PRO }}
+            TF_CLOUD_VARS_PRO: ${{ secrets.TF_CLOUD_VARS_PRO }}
 
         # Terraform vars argument for environment: TF_CLOUD_VARS + environent vars (path/env)
         # Default precedence https://www.terraform.io/docs/configuration/variables.html
@@ -225,8 +231,8 @@
             echo ::set-env name=TerraformArgTfvars::${TERRAFORM_ARG_TFVARS}
           working-directory: ${{ env.TF_WORKING_DIR}}
           env:
-            PREFIX : ${{ env.PREFIX }}
-            ENVIRONMENT : ${{ env.Environment_Commited }}
+            PREFIX: ${{ env.PREFIX }}
+            ENVIRONMENT: ${{ env.Environment_Commited }}
 
         # If share TFState and dynamic store is needed by project. Should be change the 'key' in terraform init as well
         - name: 'Build Path for Remote Tfstate'
@@ -254,7 +260,7 @@
             terraform init -no-color -get=true -get-plugins=true -upgrade -lock=true -backend-config="./${PREFIX}-backend.tfvars.json" -backend-config="key=${{ env.TfstatePath }}/terraform.tfstate"
           working-directory: ${{ env.TF_WORKING_DIR}}
           env:
-            PREFIX : ${{ env.PREFIX }}
+            PREFIX: ${{ env.PREFIX }}
 
         - name: 'Terraform fmt'
           id: fmt
@@ -279,7 +285,7 @@
             terraform plan ${TFVARS_ARG} -lock=true -no-color
           working-directory: ${{ env.TF_WORKING_DIR}}
           env:
-            TFVARS_ARG : ${{ env.TerraformArgTfvars }}
+            TFVARS_ARG: ${{ env.TerraformArgTfvars }}
 
         - name: 'Comment Plan'
           uses: actions/github-script@v2.0.0
@@ -297,7 +303,7 @@
               })
 
 
-        ######### APPLY
+          ######### APPLY
 
           # Push on master
         - name: 'Create Snapshot current tfstate in Azure'
@@ -317,7 +323,7 @@
             terraform apply ${{ env.TerraformArgTfvars }} -lock=true -auto-approve -no-color
           working-directory: ${{ env.TF_WORKING_DIR}}
           env:
-            TFVARS_ARG : ${{ env.TerraformArgTfvars }}
+            TFVARS_ARG: ${{ env.TerraformArgTfvars }}
 
 
         # clean files
