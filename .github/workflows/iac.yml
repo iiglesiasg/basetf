@@ -117,40 +117,28 @@ jobs:
           echo "-----ABP:hasta aqui ---------"
         working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
 
-      # Get terraform enviroments
-      - name: 'Copy files to deploy repo'
+      - name: 'Checkout the other Repo'
+          uses: actions/checkout@v2.3.1
+          with:
+            ref: ${{ github.head_ref }}
+            token: ${{ secrets.PAT }}
+            repository: aitorbalbas/basetfdeploy
+
+      - name: 'Change somefile in the other repo'
         run: |
-          USER_EMAIL="aitorbalbas@gmail.com"
-          GITHUB_USERNAME="aitorbalbas"
-          GITHUB_REPO="basetfdeploy"
-
-          git config --global user.email "$USER_EMAIL"
-          git config --global user.name "$GITHUB_USERNAME"
-          git clone "https://${{secrets.ABP_PERSONAL_TOKEN}}@github.com/$GITHUB_USERNAME/$GITHUB_REPO.git"
-          git checkout -b aitor
-
-          # Copy files into the git and deletes all git
-          #find "$CLONE_DIR" | grep -v "^$CLONE_DIR/\.git" | grep -v "^$CLONE_DIR$" | xargs rm -rf # delete all files (to handle deletions)
-          # cp -r "$FOLDER"/* "$CLONE_DIR"
-
-          ls -a
-          #cd iac/environments/
-          #xargs -a  ${{ env.FILES_TO_COPY}} cp -t ../../copied
-          cd basetfdeploy
-          > README.md
-          echo ${{ env.FILES_TO_COPY }} >> README.md
-          ls -a >> prueba.txt
-          git add .
-          git commit --message "Update from github action"
-        working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
+            pwd
+            ls -a
+            cd basetfdeploy
+            > pepe.txt
+            echo "hola mi primera PR" >> pepe.txt
+            git add .
+            git commit --message "Update from github action"
 
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
-          ref: ${{ github.head_ref }}
           token: ${{ secrets.ABP_PERSONAL_TOKEN }}
-          repository: aitorbalbas/basetfdeploy
           commit-message: Update report
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
@@ -173,6 +161,33 @@ jobs:
       - name: 'Salir'
         run: |
           exit 111
+
+          # Get terraform enviroments
+      - name: 'Copy files to deploy repo'
+        run: |
+            USER_EMAIL="aitorbalbas@gmail.com"
+            GITHUB_USERNAME="aitorbalbas"
+            GITHUB_REPO="basetfdeploy"
+
+            git config --global user.email "$USER_EMAIL"
+            git config --global user.name "$GITHUB_USERNAME"
+            git clone "https://${{secrets.ABP_PERSONAL_TOKEN}}@github.com/$GITHUB_USERNAME/$GITHUB_REPO.git"
+            git checkout -b aitor
+
+            # Copy files into the git and deletes all git
+            #find "$CLONE_DIR" | grep -v "^$CLONE_DIR/\.git" | grep -v "^$CLONE_DIR$" | xargs rm -rf # delete all files (to handle deletions)
+            # cp -r "$FOLDER"/* "$CLONE_DIR"
+
+            ls -a
+            #cd iac/environments/
+            #xargs -a  ${{ env.FILES_TO_COPY}} cp -t ../../copied
+            cd basetfdeploy
+            > README.md
+            echo ${{ env.FILES_TO_COPY }} >> README.md
+            ls -a >> prueba.txt
+            git add .
+            git commit --message "Update from github action"
+        working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
 
         # Config of: terraform backend (tfstate store) and resource destination
       - name: 'Select Terraform Backend and Landing'
