@@ -20,14 +20,13 @@ env:
   ENVIRONMENTS_WORKING_DIR: './iac/environments/'
   TF_ACTION_VERSION: '0.12.28'
   TF_ENVIROMENTS_PATH: 'environments/'
-  GITHUB_APPLY_MESSAGE_PATH: '.head_commit.message' ### push on master
-  GITHUB_PLAN_MESSAGE_PATH: '.pull_request.title' ### pull request on master
-  GITHUB_VALIDATE_MESSAGE_PATH: '.commits[-1].message' ### push on any branch
+  CONFIG_GIT_REPO: 'aitorbalbas/basetfdeploy'
+  CONFIG_GIT_PATH: 'configrepo'
 
 jobs:
   validate_terraform:
     name: Terraform
-    ## no latest!!!
+    ## TODO: no latest!!!
     runs-on: ubuntu-latest
 
     steps:
@@ -35,39 +34,17 @@ jobs:
       - name: 'Checkout Repo'
         uses: actions/checkout@v2.3.1
         with:
-          # get all commits -- diff among pushes to master
+          # Fetch all history for all tags and branches
           fetch-depth: 0
 
-      # # Push on any branch
-      # - name: 'Commit Message -- Terraform Validate'
-      #   if: ${{ github.ref != 'refs/heads/master' }}
-      #   run: |
-      #     export GITHUB_MESSAGE_PATH=${{ env.GITHUB_VALIDATE_MESSAGE_PATH }} && echo $GITHUB_MESSAGE_PATH
-      #     echo ::set-env name=GITHUB_MESSAGE_PATH::${GITHUB_MESSAGE_PATH}
-      # # Pull request on master
-      # - name: 'Commit Message -- Terraform Plan'
-      #   if: ${{ github.event_name == 'pull_request' }}
-      #   run: |
-      #     export GITHUB_MESSAGE_PATH=${{ env.GITHUB_PLAN_MESSAGE_PATH }} && echo $GITHUB_MESSAGE_PATH
-      #     echo ::set-env name=GITHUB_MESSAGE_PATH::${GITHUB_MESSAGE_PATH}
-      # # Push on master
-      # - name: 'Commit Message -- Terraform Apply'
-      #   if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-      #   run: |
-      #     export GITHUB_MESSAGE_PATH=${{ env.GITHUB_VALIDATE_MESSAGE_PATH }} && echo $GITHUB_MESSAGE_PATH
-      #     echo ::set-env name=GITHUB_MESSAGE_PATH::${GITHUB_MESSAGE_PATH}
-
-      # # Based on commit message deploy on (environment)
-      # - name: 'Select Environment on Commit Message'
-      #   run: |
-      #     # Get enviroment info head commit: "i.e.: (dev) this is the message"
-      #     export ENVIRONMENT_COMMIT_MESSAGE=$(jq ${{ env.GITHUB_MESSAGE_PATH }} $GITHUB_EVENT_PATH --raw-output | awk -F '[()]' '{print $(NR+1)}')
-      #     echo "Commit message: $(jq ${{ env.GITHUB_MESSAGE_PATH }} $GITHUB_EVENT_PATH --raw-output)"
-      #     echo "Environment: $ENVIRONMENT_COMMIT_MESSAGE"
-      #     # Check if the environments path contains the environment set in the commited message
-      #     if ([[ ! -d "${{ env.TF_ENVIROMENTS_PATH }}$ENVIRONMENT_COMMIT_MESSAGE" ]] || [[ -z "$ENVIRONMENT_COMMIT_MESSAGE" ]]); then echo "ERROR: Wrong environment provided (usage: i.e.: (dev) commit message)"; exit 1 ; fi
-      #     echo ::set-env name=Environment_Commited::${ENVIRONMENT_COMMIT_MESSAGE}
-      #   working-directory: ${{ env.TF_WORKING_DIR}}
+      - name: 'Checkout the other Repo (environments real repo)'
+          uses: actions/checkout@v2.3.1
+          with:
+            # Workflows triggered by pull_request events will by default check out a merge commit. To prevent the merge commit being included in created pull requests it is necessary to checkout the head_ref.
+            ref: ${{ github.head_ref }}
+            token: ${{ secrets.ABP_PERSONAL_TOKEN }}
+            repository: ${{ env.CONFIG_GIT_REPO }}
+            path: ${{ env.CONFIG_GIT_PATH }}
 
       # Get files commited
       - name: 'Get files commited between two pushes (1+ commits)'
@@ -82,19 +59,19 @@ jobs:
           TF_ENVIROMENTS_PATH: ${{ env.TF_ENVIROMENTS_PATH}}
 
       # Get terraform enviroments
-      - name: 'identify files to copy to deploy repo 32'
+      - name: 'identify files to copy to deploy repo'
         run: |
           > entornos.txt
-          #get the commited files and set an array with them
+          #---get the commited files and set an array with them
           arr=(${{ env.FILES_COMMITTED }})
-          #iterate the files commited elements lookig to identify wich environments are affected
+          #---iterate the files commited elements looking to identify wich environments are affected
           for i in "${arr[@]}"
             do
               echo "-----ABP: estamos en: $i"
-              #cogemos solo el path de los ficheros
+              #---get only the path withot filename
               idirname="${i%/*}"
               echo "-----ABP: idirname es $idirname"
-              # count how many files are under this path,if more than one, the commit affects many environments
+              #---count how many files are under this path,if more than one, the file affects many environments
               childdircount=$(find $idirname -maxdepth 1 -type d | wc -l)
               echo "-----ABP:el numero para $i es $childdircount"
               if [ $((childdircount - 1)) -gt 0 ]
@@ -109,33 +86,13 @@ jobs:
                  #done
               else
                 echo "-----ABP:El cambio solo afecta al entorno $idirname"
-                #copiamos el fichero a la carpeta auxiliar con la misma estructura de directorios
-                mkdir -p "../../auxenv/$idirname" && cp "$i" "$_"
-                echo $idirname >> entornos.txt
+                #copy the file to the other repository
+                mkdir -p "../../configrepo/$idirname" && cp "$i" "$_"
               fi
             done
           echo "-----ABP:hasta aqui ---------"
         working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
 
-      - name: 'Checkout the other Repo'
-        uses: actions/checkout@v2.3.1
-        with:
-          ref: ${{ github.head_ref }}
-          token: ${{ secrets.ABP_PERSONAL_TOKEN }}
-          repository: aitorbalbas/basetfdeploy
-
-      - name: 'Change somefile in the other repo'
-        run: |
-            USER_EMAIL="aitorbalbas@gmail.com"
-            GITHUB_USERNAME="aitorbalbas"
-            pwd
-            ls -a
-            > pepe.txt
-            echo "hola mi primera PR" >> pepe.txt
-            #git config --global user.email "$USER_EMAIL"
-            #git config --global user.name "$GITHUB_USERNAME"
-            #git add .
-            #git commit --message "Update from github action"
 
       - name: Create Pull Request
         id: cpr
@@ -145,16 +102,14 @@ jobs:
           commit-message: Update report
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          #branch: example-patches
-          title: '[Example] Update report'
+          branch: example-patches
+          title: 'cambios en ficheros'
           body: |
             Update report
-            - Updated with *today's* date
-            - Auto-generated by [create-pull-request][1]
-            [1]: https://github.com/peter-evans/create-pull-request
+            - Esto es un ejmplo de body de una PR
           labels: |
             automated pr
-          assignees: aitorbalbas
+          assignees: ${{ github.actor }}
           reviewers: aitorbalbas
           team-reviewers: |
             owners
