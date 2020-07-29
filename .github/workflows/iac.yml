@@ -126,12 +126,16 @@ jobs:
 
       - name: 'Change somefile in the other repo'
         run: |
+            USER_EMAIL="aitorbalbas@gmail.com"
+            GITHUB_USERNAME="aitorbalbas"
             pwd
             ls -a
             > pepe.txt
             echo "hola mi primera PR" >> pepe.txt
-            git add .
-            git commit --message "Update from github action"
+            #git config --global user.email "$USER_EMAIL"
+            #git config --global user.name "$GITHUB_USERNAME"
+            #git add .
+            #git commit --message "Update from github action"
 
       - name: Create Pull Request
         id: cpr
