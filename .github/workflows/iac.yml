@@ -61,6 +61,8 @@ jobs:
       # Get terraform enviroments
       - name: 'identify files to copy to deploy repo'
         run: |
+          git config --global user.email "$USER_EMAIL"
+          git config --global user.name "$GITHUB_USERNAME"
           #---get the commited files and set an array with them
           arr=(${{ env.FILES_COMMITTED }})
           #---iterate the files commited elements looking to identify wich environments are affected
@@ -86,16 +88,10 @@ jobs:
               else
                 echo "-----ABP:El cambio solo afecta al entorno $idirname"
                 #copy the file to the other repository
-                pwd
-                ls -a
-                cd ..
-                cd ..
-                pwd
-                ls -a
-                cd configrepo
-                ls -a
-                //mkdir -p "../../configrepo/$idirname" && cp "$i" "$_"
-
+                mkdir -p "../../configrepo/$idirname" && cp "$i" "$_"
+                git add .
+                git commit --message "Update from github action"
+                git push
               fi
             done
           echo "-----ABP:hasta aqui ---------"
