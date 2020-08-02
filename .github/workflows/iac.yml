@@ -61,8 +61,7 @@ jobs:
       # Get terraform enviroments
       - name: 'identify files to copy to deploy repo'
         run: |
-          git config --global user.email "$USER_EMAIL"
-          git config --global user.name "$GITHUB_USERNAME"
+
           #---get the commited files and set an array with them
           arr=(${{ env.FILES_COMMITTED }})
           #---iterate the files commited elements looking to identify wich environments are affected
@@ -92,6 +91,8 @@ jobs:
                 mkdir -p "$idirname" && cp "../iac/environments/$i" "$_"
                 echo "despues"
                 ls -a
+                git config --global user.email "$USER_EMAIL"
+                git config --global user.name "$GITHUB_USERNAME"
                 git branch aitor
                 git checkout aitor
                 git add .
