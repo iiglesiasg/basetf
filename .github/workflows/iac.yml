@@ -88,6 +88,10 @@ jobs:
                 #copy the file to the other repository
                 pwd
                 ls -a
+                cd ..
+                cd ..
+                pwd
+                ls -a
                 //mkdir -p "../../configrepo/$idirname" && cp "$i" "$_"
 
               fi
