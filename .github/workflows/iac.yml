@@ -22,6 +22,8 @@ env:
   TF_ENVIROMENTS_PATH: 'environments/'
   CONFIG_GIT_REPO: 'aitorbalbas/basetfdeploy'
   CONFIG_GIT_PATH: 'configrepo'
+  USER_EMAIL: 'aitorbalbas@gmail.com'
+  GITHUB_USERNAME: 'aitorbalbas'
 
 jobs:
   validate_terraform:
@@ -91,8 +93,8 @@ jobs:
                 mkdir -p "$idirname" && cp "../iac/environments/$i" "$_"
                 echo "despues"
                 ls -a
-                git config --global user.email "$USER_EMAIL"
-                git config --global user.name "$GITHUB_USERNAME"
+                git config --global user.email "${{ env.USER_EMAIL }}"
+                git config --global user.name "${{ env.GITHUB_USERNAME }}""
                 git branch aitor
                 git checkout aitor
                 git add .
@@ -106,6 +108,7 @@ jobs:
           # Get terraform enviroments
       - name: 'Copy files to deploy repo'
         run: |
+            exit 111
             USER_EMAIL="aitorbalbas@gmail.com"
             GITHUB_USERNAME="aitorbalbas"
             GITHUB_REPO="basetfdeploy"
