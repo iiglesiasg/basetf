@@ -37,15 +37,6 @@ jobs:
           # Fetch all history for all tags and branches
           fetch-depth: 0
 
-      - name: 'Checkout the other Repo (environments real repo)'
-        uses: actions/checkout@v2.3.1
-        with:
-          # Workflows triggered by pull_request events will by default check out a merge commit. To prevent the merge commit being included in created pull requests it is necessary to checkout the head_ref.
-          ref: ${{ github.head_ref }}
-          token: ${{ secrets.ABP_PERSONAL_TOKEN }}
-          repository: ${{ env.CONFIG_GIT_REPO }}
-          path: ${{ env.CONFIG_GIT_PATH }}
-
       # Get files commited
       - name: 'Get files commited between two pushes (1+ commits)'
         run: |
@@ -58,10 +49,18 @@ jobs:
         env:
           TF_ENVIROMENTS_PATH: ${{ env.TF_ENVIROMENTS_PATH}}
 
+      - name: 'Checkout the other Repo (environments real repo)'
+          uses: actions/checkout@v2.3.1
+          with:
+            # Workflows triggered by pull_request events will by default check out a merge commit. To prevent the merge commit being included in created pull requests it is necessary to checkout the head_ref.
+            ref: ${{ github.head_ref }}
+            token: ${{ secrets.ABP_PERSONAL_TOKEN }}
+            repository: ${{ env.CONFIG_GIT_REPO }}
+            path: ${{ env.CONFIG_GIT_PATH }}
+
       # Get terraform enviroments
       - name: 'identify files to copy to deploy repo'
         run: |
-          > entornos.txt
           #---get the commited files and set an array with them
           arr=(${{ env.FILES_COMMITTED }})
           #---iterate the files commited elements looking to identify wich environments are affected
@@ -87,38 +86,14 @@ jobs:
               else
                 echo "-----ABP:El cambio solo afecta al entorno $idirname"
                 #copy the file to the other repository
-                mkdir -p "../../configrepo/$idirname" && cp "$i" "$_"
+                pwd
+                ls -a
+                //mkdir -p "../../configrepo/$idirname" && cp "$i" "$_"
+
               fi
             done
           echo "-----ABP:hasta aqui ---------"
         working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
-
-
-      - name: Create Pull Request
-        id: cpr
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.ABP_PERSONAL_TOKEN }}
-          commit-message: Update report
-          committer: GitHub <noreply@github.com>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          #branch: example-patches
-          title: 'cambios en ficheros'
-          body: |
-            Update report
-            - Esto es un ejmplo de body de una PR
-          labels: |
-            automated pr
-          assignees: ${{ github.actor }}
-          reviewers: aitorbalbas
-          team-reviewers: |
-            owners
-            maintainers
-          draft: false
-
-      - name: 'Salir'
-        run: |
-          exit 111
 
           # Get terraform enviroments
       - name: 'Copy files to deploy repo'
@@ -146,160 +121,3 @@ jobs:
             git add .
             git commit --message "Update from github action"
         working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
-
-        # Config of: terraform backend (tfstate store) and resource destination
-      - name: 'Select Terraform Backend and Landing'
-        run: |
-            # Select Backend and Landing (future: variable names in github secrets!!!)
-            export PREFIX=$(date +%s%3N)
-            export ENVIRONMENT=$(echo ${ENVIROMENT_COMMITED}|tr a-z A-Z)
-            if ([[ ! -n "${ENVIRONMENT}" ]] || [[ -z ${ENVIRONMENT} ]]) then exit 1; fi
-            export AZ_TF_BACKEND="AZ_TF_BACKEND_$ENVIRONMENT"
-            export AZ_TF_LANDING="AZ_TF_LANDING_$ENVIRONMENT"
-            export TF_CLOUD_VARS="TF_CLOUD_VARS_$ENVIRONMENT"
-            bash -c 'echo ${!AZ_TF_BACKEND} > ${PREFIX}-backend.tfvars.json'
-            bash -c 'echo ${!AZ_TF_LANDING} > ${PREFIX}-landing.tfvars.json'
-            bash -c 'if ([[ -n "${!TF_CLOUD_VARS}" ]] || [[ ! -z ${!TF_CLOUD_VARS} ]]) then echo ${!TF_CLOUD_VARS} > ${PREFIX}-cloud.tfvars.json; fi'
-            echo ::set-env name=PREFIX::${PREFIX}
-        working-directory: ${{ env.TF_WORKING_DIR}}
-        env:
-            ENVIROMENT_COMMITED: ${{ env.Environment_Commited }}
-            # github future: dynamic secret variable name ${{ secrets.AZ_TF_BACKEND_$VARIABLE }}
-            # possible solution: get secrets from GITHUB API
-            AZ_TF_BACKEND_DEV: ${{ secrets.AZ_TF_BACKEND_DEV }}
-            AZ_TF_LANDING_DEV: ${{ secrets.AZ_TF_LANDING_DEV }}
-            TF_CLOUD_VARS_DEV: ${{ secrets.TF_CLOUD_VARS_DEV }}
-            AZ_TF_BACKEND_PRE: ${{ secrets.AZ_TF_BACKEND_PRE }}
-            AZ_TF_LANDING_PRE: ${{ secrets.AZ_TF_LANDING_PRE }}
-            TF_CLOUD_VARS_PRE: ${{ secrets.TF_CLOUD_VARS_PRE }}
-            AZ_TF_BACKEND_PRO: ${{ secrets.AZ_TF_BACKEND_PRO }}
-            AZ_TF_LANDING_PRO: ${{ secrets.AZ_TF_LANDING_PRO }}
-            TF_CLOUD_VARS_PRO: ${{ secrets.TF_CLOUD_VARS_PRO }}
-
-        # Terraform vars argument for environment: TF_CLOUD_VARS + environent vars (path/env)
-        # Default precedence https://www.terraform.io/docs/configuration/variables.html
-      - name: 'Build Tfvars'
-        run: |
-            # Workflow precedence (order provided precedence): environment tfvars, root tfvars
-            # Build tfvars arg
-            # Get all tfvars in root path
-            export TERRAFORM_ARG_TFVARS="-var-file=./${{ env.PREFIX }}-landing.tfvars.json "
-            # Include Cloud varfile if exists
-            if [[ -f "${PREFIX}-cloud.tfvars.json" ]]; then export TERRAFORM_ARG_TFVARS="$TERRAFORM_ARG_TFVARS -var-file=./${PREFIX}-cloud.tfvars.json " ; fi
-            # environment vars (higher precedence)
-            for tfvarfile in $( find ${{ env.TF_ENVIROMENTS_PATH }}$ENVIRONMENT -type f | grep -P '(^(.*\.(tfvars|tfvars\.json))$)' )
-              do TERRAFORM_ARG_TFVARS="$TERRAFORM_ARG_TFVARS-var-file=$tfvarfile ";
-            done
-            ## common tfvars root folder (terraform.tfvars ans *auto* are excluded)
-            ##for tfvarfile in $( find . -maxdepth 1 -type f | grep -P '(?!.*(auto))(?!.*terraform\.(tfvars|tfvars\.json))^(.*\.(tfvars|tfvars\.json))$' )
-            ##  do TERRAFORM_ARG_TFVARS="$TERRAFORM_ARG_TFVARS-var-file=$tfvarfile ";
-            ##  echo "ROOT-$TERRAFORM_ARG_TFVARS"
-            ##done
-            echo "+++++++++++++ TFVARS: $TERRAFORM_ARG_TFVARS"
-            echo ::set-env name=TerraformArgTfvars::${TERRAFORM_ARG_TFVARS}
-        working-directory: ${{ env.TF_WORKING_DIR}}
-        env:
-            PREFIX: ${{ env.PREFIX }}
-            ENVIRONMENT: ${{ env.Environment_Commited }}
-
-        # If share TFState and dynamic store is needed by project. Should be change the 'key' in terraform init as well
-      - name: 'Build Path for Remote Tfstate'
-        run: |
-            export BUSINESS_UNIT=$(grep "business_unit \+=" ${{ env.PROJECT_AUTO_TFVARS }} | awk -F\" '{print tolower($2)}')
-            export DEPARTMENT=$(grep "department \+=" ${{ env.PROJECT_AUTO_TFVARS }} | awk -F\" '{print tolower($2)}')
-            export PROJECT=$(grep "project \+=" ${{ env.PROJECT_AUTO_TFVARS }} | awk -F\" '{print tolower($2)}')
-            export ENVIRONMENT=${{ env.Environment_Commited }}
-            if [[ -z $BUSINESS_UNIT || -z $DEPARTMENT || -z $PROJECT ]]; then echo "Wrong ${{ env.PROJECT_AUTO_TFVARS }} content" && exit 1;fi
-            export TFSTATE_PATH="${BUSINESS_UNIT}/${DEPARTMENT}/${PROJECT}/${ENVIRONMENT}"
-            echo ::set-env name=TfstatePath::${TFSTATE_PATH}
-        working-directory: ${{ env.TF_WORKING_DIR}}
-
-
-        ########  FMT + VALIDATE
-
-      - name: 'Setup Terraform'
-        uses: hashicorp/setup-terraform@v1.1.0
-        with:
-            terraform_version: ${{ env.TF_ACTION_VERSION }}
-
-      - name: 'Terraform Init'
-        id: init
-        run: |
-            terraform init -no-color -get=true -get-plugins=true -upgrade -lock=true -backend-config="./${PREFIX}-backend.tfvars.json" -backend-config="key=${{ env.TfstatePath }}/terraform.tfstate"
-        working-directory: ${{ env.TF_WORKING_DIR}}
-        env:
-            PREFIX: ${{ env.PREFIX }}
-
-      - name: 'Terraform fmt'
-        id: fmt
-        run: |
-            terraform fmt -recursive -check -write=false -diff
-        working-directory: ${{ env.TF_WORKING_DIR}}
-
-      - name: 'Terraform validate'
-        id: validate
-        run: |
-            terraform validate -no-color
-        working-directory: ${{ env.TF_WORKING_DIR}}
-
-
-          ######### PLAN
-
-          # Pull request on master
-      - name: 'Terraform Plan'
-        if: ${{ github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/master') }}
-        id: plan
-        run: |
-            terraform plan ${TFVARS_ARG} -lock=true -no-color
-        working-directory: ${{ env.TF_WORKING_DIR}}
-        env:
-            TFVARS_ARG: ${{ env.TerraformArgTfvars }}
-
-      - name: 'Comment Plan'
-        uses: actions/github-script@v2.0.0
-        if: ${{ github.event_name == 'pull_request' }}
-        env:
-            STDOUT: "```${{ steps.plan.outputs.stdout }}```"
-        with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            script: |
-              github.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: process.env.STDOUT
-              })
-
-
-          ######### APPLY
-
-          # Push on master
-      - name: 'Create Snapshot current tfstate in Azure'
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-        run: |
-            export AZ_STORAGE_ACCOUNT_NAME=$(jq .storage_account_name ./${{ env.PREFIX }}-backend.tfvars.json --raw-output)
-            export AZ_CONTAINER_NAME=$(jq .container_name ./${{ env.PREFIX }}-backend.tfvars.json --raw-output)
-            export AZ_SAS_TOKEN=$(jq .sas_token ./${{ env.PREFIX }}-backend.tfvars.json --raw-output)
-            export AZ_TFSTATE_NAME=$(jq .key ./${{ env.PREFIX }}-backend.tfvars.json --raw-output)
-            curl -X PUT -H "x-ms-date: $(date -u)" -H "x-ms-blob-type: BlockBlob" -H "Content-Type: application/json" -H "Content-Length: 0" "https://${AZ_STORAGE_ACCOUNT_NAME}.blob.core.windows.net/${AZ_CONTAINER_NAME}/${{ env.TfstatePath }}/${AZ_TFSTATE_NAME}${AZ_SAS_TOKEN}&comp=snapshot" -i
-        working-directory: ${{ env.TF_WORKING_DIR}}
-
-      - name: 'Terraform Apply'
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-        id: apply
-        run: |
-            terraform apply ${{ env.TerraformArgTfvars }} -lock=true -auto-approve -no-color
-        working-directory: ${{ env.TF_WORKING_DIR}}
-        env:
-            TFVARS_ARG: ${{ env.TerraformArgTfvars }}
-
-
-        # clean files
-      - name: 'Remove backend and landing file'
-        run: |
-            echo "" > ./${{ env.PREFIX }}-backend.tfvars.json; rm -fr ./${{ env.PREFIX }}-backend.tfvars.json
-            echo "" > ./${{ env.PREFIX }}-landing.tfvars.json; rm -fr ./${{ env.PREFIX }}-landing.tfvars.json
-            echo "" > ./${{ env.PREFIX }}-cloud.tfvars.json; rm -fr ./${{ env.PREFIX }}-cloud.tfvars.json
-            rm -fr .terraform/
-            rm -fr .azure/
-
