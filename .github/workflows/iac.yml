@@ -50,13 +50,13 @@ jobs:
           TF_ENVIROMENTS_PATH: ${{ env.TF_ENVIROMENTS_PATH}}
 
       - name: 'Checkout the other Repo (environments real repo)'
-          uses: actions/checkout@v2.3.1
-          with:
-            # Workflows triggered by pull_request events will by default check out a merge commit. To prevent the merge commit being included in created pull requests it is necessary to checkout the head_ref.
-            ref: ${{ github.head_ref }}
-            token: ${{ secrets.ABP_PERSONAL_TOKEN }}
-            repository: ${{ env.CONFIG_GIT_REPO }}
-            path: ${{ env.CONFIG_GIT_PATH }}
+        uses: actions/checkout@v2.3.1
+        with:
+          # Workflows triggered by pull_request events will by default check out a merge commit. To prevent the merge commit being included in created pull requests it is necessary to checkout the head_ref.
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.ABP_PERSONAL_TOKEN }}
+          repository: ${{ env.CONFIG_GIT_REPO }}
+          path: ${{ env.CONFIG_GIT_PATH }}
 
       # Get terraform enviroments
       - name: 'identify files to copy to deploy repo'
