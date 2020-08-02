@@ -88,14 +88,19 @@ jobs:
               else
                 echo "-----ABP:El cambio solo afecta al entorno $idirname"
                 #copy the file to the other repository
-                mkdir -p "../../configrepo/$idirname" && cp "$i" "$_"
+                ls -a
+                mkdir -p "$idirname" && cp "$i" "$_"
+                echo "despues"
+                ls -a
+                git branch aitor
+                git checkout aitor
                 git add .
                 git commit --message "Update from github action"
                 git push
               fi
             done
           echo "-----ABP:hasta aqui ---------"
-        working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
+        working-directory: ${{ env.CONFIG_GIT_PATH}}
 
           # Get terraform enviroments
       - name: 'Copy files to deploy repo'
