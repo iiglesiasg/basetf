@@ -89,7 +89,7 @@ jobs:
                 echo "-----ABP:El cambio solo afecta al entorno $idirname"
                 #copy the file to the other repository
                 ls -a
-                mkdir -p "$idirname" && cp "$i" "$_"
+                mkdir -p "$idirname" && cp "../iac/environments/$i" "$_"
                 echo "despues"
                 ls -a
                 git branch aitor
