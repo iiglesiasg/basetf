@@ -1,1 +1,1 @@
-ieoa
+aeiou
