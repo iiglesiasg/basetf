@@ -99,7 +99,7 @@ jobs:
                 git checkout aitor
                 git add .
                 git commit --message "Update from github action"
-                git push
+                git push --set-upstream origin aitor
               fi
             done
           echo "-----ABP:hasta aqui ---------"
