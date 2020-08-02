@@ -24,6 +24,7 @@ env:
   CONFIG_GIT_PATH: 'configrepo'
   USER_EMAIL: 'aitorbalbas@gmail.com'
   GITHUB_USERNAME: 'aitorbalbas'
+  BRANCH_PREFIX: 'promotions/'
 
 jobs:
   validate_terraform:
@@ -95,11 +96,11 @@ jobs:
                 ls -a
                 git config --global user.email "${{ env.USER_EMAIL }}"
                 git config --global user.name "${{ env.GITHUB_USERNAME }}"
-                git branch aitor
-                git checkout aitor
+                git branch ${{ env.BRANCH_PREFIX }}$idirname
+                git checkout ${{ env.BRANCH_PREFIX }}$idirname
                 git add .
                 git commit --message "Update from github action"
-                git push --set-upstream origin aitor
+                git push --set-upstream origin ${{ env.BRANCH_PREFIX }}$idirname
               fi
             done
           echo "-----ABP:hasta aqui ---------"
