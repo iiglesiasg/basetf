@@ -92,6 +92,8 @@ jobs:
                 cd ..
                 pwd
                 ls -a
+                cd configrepo
+                ls -a
                 //mkdir -p "../../configrepo/$idirname" && cp "$i" "$_"
 
               fi
