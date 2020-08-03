@@ -103,7 +103,7 @@ jobs:
               fi
             done
           #remove duplicate environments
-          sort {file-name} | uniq -u
+          sort {entornos.txt} | uniq -u
           echo "Para todos los ficheros el listado de entornos a los que tienes que lanzar PR es:"
           cat entornos.txt
           rm entornos.txt
