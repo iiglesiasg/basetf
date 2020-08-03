@@ -92,13 +92,14 @@ jobs:
               echo "xxxABP: estamos en: $i"
               childdircount=$(find $idirname -maxdepth 1 -type d | wc -l)
               echo "xxxABP:el numero para $i es $childdircount"
-                if [ $((childdircount - 1)) -gt 0 ]
-                then
-                  ENTORNOS=$(find $idirname -type d  -mindepth 1 -links 2 ! -empty)
-                  #ENTORNOS=$(find $idirname -mindepth 1 -type d)
-                  echo "El cambio solo afecta a estos entornos  : $ENTORNOS"
-                fi
+              #find directories without children
+              ENTORNOS=$(find $idirname -type d  -mindepth 1 -links 2 ! -empty)
+              echo $ENTORNOS >> entornos.txt
+              echo "El cambio del fichero $i afecta a estos entornos  : $ENTORNOS"
             done
+          echo "Para todos los ficheros el listado de entornos a los que tienes que lanzar PR es:"
+          cat entornos.txt
+          rm entornos.txt
         working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
 
       # Get terraform enviroments
