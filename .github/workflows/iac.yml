@@ -76,8 +76,8 @@ jobs:
               echo "xxxABP:el numero para $i es $childdircount"
                 if [ $((childdircount - 1)) -gt 0 ]
                 then
-                  ENTORNOS=$(find $idirname -maxdepth 1 -type d)
-                  echo "El cambio solo afecta a estos ficheros: $ENTORNOS"
+                  ENTORNOS=$(find $idirname -maxdepth 1 -mindepth 1-type d)
+                  echo "El cambio solo afecta a estos entornos  : $ENTORNOS"
                 fi
             done
         working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
