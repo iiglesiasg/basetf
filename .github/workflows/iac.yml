@@ -65,6 +65,7 @@ jobs:
 
       - name: 'flatten files'
         run: |
+          ls -a
           arr=(${{ env.FILES_COMMITTED }})
           for i in "${arr[@]}"
             do
@@ -79,6 +80,7 @@ jobs:
                   echo "El cambio solo afecta a estos ficheros: $FICHEROS"
                 fi
             done
+        working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
 
       # Get terraform enviroments
       - name: 'identify files to copy to deploy repo'
