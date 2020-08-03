@@ -134,8 +134,8 @@ jobs:
               pwd
               ls -la
               echo "-----------"
-              ls -la d1/d12/pre
-              git add "$j/*"
+              ls -la d1/d12/pro
+              git add "$j"
               echo "1"
               git commit --message "Update from github action ABP"
               echo "2"
