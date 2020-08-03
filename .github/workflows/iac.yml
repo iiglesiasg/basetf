@@ -119,9 +119,18 @@ jobs:
 
           #iterar entornos y lanzar commits por cada uno
           readarray arrEntornos < entornos.txt
+          cd ../../${{ env.CONFIG_GIT_PATH }}/
+          git config --global user.email "${{ env.USER_EMAIL }}"
+          git config --global user.name "${{ env.GITHUB_USERNAME }}"
           for j in "${arrEntornos[@]}"
             do
               echo "--------> voy a crear una rama para $j"
+              git branch ${{ env.BRANCH_PREFIX }}$j
+              git checkout ${{ env.BRANCH_PREFIX }}$j
+              git add .
+              git commit --message "Update from github action ABP"
+              git push --set-upstream origin ${{ env.BRANCH_PREFIX }}$j
+              git checkout master
             done
 
           rm entornos.txt
