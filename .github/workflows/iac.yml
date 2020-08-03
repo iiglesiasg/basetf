@@ -128,6 +128,8 @@ jobs:
               git branch ${{ env.BRANCH_PREFIX }}$j
               git checkout ${{ env.BRANCH_PREFIX }}$j
               echo "0"
+              pwd
+              ls -a
               git add "$j/*"
               echo "1"
               git commit --message "Update from github action ABP"
