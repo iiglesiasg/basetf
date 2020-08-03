@@ -61,6 +61,25 @@ jobs:
           repository: ${{ env.CONFIG_GIT_REPO }}
           path: ${{ env.CONFIG_GIT_PATH }}
 
+
+
+      - name: 'flatten files'
+        run: |
+          arr=(${{ env.FILES_COMMITTED }})
+          for i in "${arr[@]}"
+            do
+              idirname="${i%/*}"
+              echo "xxxABP: estamos en: $i"
+              childdircount=$(find $idirname -maxdepth 1 -type d | wc -l)
+              childdir=find $idirname -maxdepth 1 -type d
+              echo "xxxABP:el numero para $i es $childdircount"
+                if [ $((childdircount - 1)) -gt 0 ]
+                then
+                  FICHEROS=$(find $idirname -type f)
+                  echo "El cambio solo afecta a estos ficheros: $FICHEROS"
+                fi
+            done
+
       # Get terraform enviroments
       - name: 'identify files to copy to deploy repo'
         run: |
