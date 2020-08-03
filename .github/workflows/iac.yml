@@ -52,6 +52,24 @@ jobs:
         env:
           TF_ENVIROMENTS_PATH: ${{ env.TF_ENVIROMENTS_PATH}}
 
+      # Get the author of last commit
+      - name: 'Get the author of last commit'
+        run: |
+          GITHUB_USERNAME=$(git log -1 --pretty=format:'%an')
+          echo $GITHUB_USERNAME
+          echo ::set-env name=GITHUB_USERNAME::${GITHUB_USERNAME}
+        env:
+          TF_ENVIROMENTS_PATH: ${{ env.TF_ENVIROMENTS_PATH}}
+
+      # Get the user email of last commit author
+      - name: 'Get the user email of last commit author'
+        run: |
+          USER_EMAIL=$(git log -1 --pretty=format:'%ae')
+          echo $USER_EMAIL
+          echo ::set-env name=USER_EMAIL::${USER_EMAIL}
+        env:
+          TF_ENVIROMENTS_PATH: ${{ env.TF_ENVIROMENTS_PATH}}
+
       - name: 'Checkout the other Repo (environments real repo)'
         uses: actions/checkout@v2.3.1
         with:
