@@ -119,7 +119,7 @@ jobs:
           rm entornos.txt
 
           #iterar entornos y lanzar commits por cada uno
-          arrEntornos=(cat entornos.txt)
+          arrEntornos=$(cat entornos.txt)
           for j in "${arrEntornos[@]}"
             do
               echo "--------> voy a crear una rama para $j"
