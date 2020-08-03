@@ -102,8 +102,8 @@ jobs:
                 arr2=($ENTORNOS)
                 for k in "${arr2[@]}"
                   do
-                    echo "estamos en $k"
-                    mkdir -p "../../${{ env.CONFIG_GIT_PATH }}/$idirname" && cp "$k" "$_"
+                    echo "estamos en $k y vamos a copiar $i"
+                    mkdir -p "../../${{ env.CONFIG_GIT_PATH }}/$idirname" && cp "$i" "$_"
                     cd ../../${{ env.CONFIG_GIT_PATH }}/
                     ls -a
                   done
