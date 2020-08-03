@@ -139,7 +139,7 @@ jobs:
       # Get terraform enviroments
       - name: 'identify files to copy to deploy repo'
         run: |
-
+          exit 111
           #---get the commited files and set an array with them
           arr=(${{ env.FILES_COMMITTED }})
           #---iterate the files commited elements looking to identify wich environments are affected
