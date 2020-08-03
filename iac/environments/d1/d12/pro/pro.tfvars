@@ -1,5 +1,5 @@
 # Environment vars
-environment = "proaaaa" // environment: poc dev pre pro
+environment = "proaaaaa" // environment: poc dev pre pro
 
 
 
