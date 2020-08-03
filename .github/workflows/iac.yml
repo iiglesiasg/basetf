@@ -91,12 +91,19 @@ jobs:
               echo "xxxABP: idirname es: $idirname"
               echo "xxxABP: estamos en: $i"
               childdircount=$(find $idirname -maxdepth 1 -type d | wc -l)
-              echo "xxxABP:el numero para $i es $childdircount"
-              #find directories without children
-              ENTORNOS=$(find $idirname -type d  -mindepth 1 -links 2 ! -empty)
-              echo $ENTORNOS >> entornos.txt
-              echo "El cambio del fichero $i afecta a estos entornos  : $ENTORNOS"
+              if [ $((childdircount - 1)) -gt 0 ]
+              then
+                #find directories without children
+                ENTORNOS=$(find $idirname -type d  -mindepth 1 -links 2 ! -empty)
+                echo "El cambio del fichero $i afecta a estos entornos: $ENTORNOS"
+                echo $ENTORNOS >> entornos.txt
+              else
+                echo "El cambio del fichero $i afecta a estos entornos: $idirname"
+                echo $idirname >> entornos.txt
+              fi
             done
+          #remove duplicate environments
+          sort {entornos.txt} | uniq -u
           echo "Para todos los ficheros el listado de entornos a los que tienes que lanzar PR es:"
           cat entornos.txt
           rm entornos.txt
