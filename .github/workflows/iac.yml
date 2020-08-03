@@ -103,7 +103,7 @@ jobs:
                 #copy the file to the other repository
                 pwd
                 ls -a
-                mkdir -p "../../${{ env.CONFIG_GIT_PATH }}/$idirname" && cp "../../${{ env.CONFIG_GIT_PATH }}/$i" "$_"
+                mkdir -p "../../${{ env.CONFIG_GIT_PATH }}/$idirname" && cp "$i" "$_"
                 cd ../../${{ env.CONFIG_GIT_PATH }}/
                 pwd
                 ls -a
