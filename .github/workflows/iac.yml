@@ -76,7 +76,7 @@ jobs:
               echo "xxxABP:el numero para $i es $childdircount"
                 if [ $((childdircount - 1)) -gt 0 ]
                 then
-                  ENTORNOS=$(find $idirname -maxdepth 1 -mindepth 1 -type d)
+                  ENTORNOS=$(find $idirname -mindepth 1 -type d)
                   echo "El cambio solo afecta a estos entornos  : $ENTORNOS"
                 fi
             done
