@@ -57,7 +57,7 @@ jobs:
         with:
           # Workflows triggered by pull_request events will by default check out a merge commit. To prevent the merge commit being included in created pull requests it is necessary to checkout the head_ref.
           ref: ${{ github.head_ref }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ABP_PERSONAL_TOKEN }}
           repository: ${{ env.CONFIG_GIT_REPO }}
           path: ${{ env.CONFIG_GIT_PATH }}
 
@@ -137,7 +137,7 @@ jobs:
 
             git config --global user.email "$USER_EMAIL"
             git config --global user.name "$GITHUB_USERNAME"
-            git clone "https://${{secrets.GITHUB_TOKEN}}@github.com/$GITHUB_USERNAME/$GITHUB_REPO.git"
+            git clone "https://${{secrets.ABP_PERSONAL_TOKEN}}@github.com/$GITHUB_USERNAME/$GITHUB_REPO.git"
             git checkout -b aitor
 
             # Copy files into the git and deletes all git
