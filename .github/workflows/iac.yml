@@ -127,7 +127,7 @@ jobs:
               echo "--------> voy a crear una rama para $j"
               git branch ${{ env.BRANCH_PREFIX }}$j
               git checkout ${{ env.BRANCH_PREFIX }}$j
-              git add .
+              git add $j/*
               git commit --message "Update from github action ABP"
               git push --set-upstream origin ${{ env.BRANCH_PREFIX }}$j
               git checkout master
