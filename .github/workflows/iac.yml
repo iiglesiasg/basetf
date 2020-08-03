@@ -104,8 +104,6 @@ jobs:
                   do
                     echo "estamos en $k y vamos a copiar $i"
                     mkdir -p "../../${{ env.CONFIG_GIT_PATH }}/$idirname" && cp "$i" "$_"
-                    cd ../../${{ env.CONFIG_GIT_PATH }}/
-                    ls -a
                   done
               else
                 echo "El cambio del fichero $i afecta a estos entornos: $idirname"
@@ -119,6 +117,15 @@ jobs:
           echo "Para todos los ficheros el listado de entornos a los que tienes que lanzar PR es:"
           cat entornos.txt
           rm entornos.txt
+
+          #iterar entornos y lanzar commits por cada uno
+          arrEntornos=(cat entornos.txt)
+          for j in "${arrEntornos[@]}"
+            do
+              echo "--------> voy a crear una rama para $j"
+            done
+
+
         working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
 
       # Get terraform enviroments
