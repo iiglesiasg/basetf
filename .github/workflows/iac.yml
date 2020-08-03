@@ -103,7 +103,10 @@ jobs:
                 for k in "${arr2[@]}"
                   do
                     echo "estamos en $k y vamos a copiar $i"
+                    echo "---esta es la ruta ../../${{ env.CONFIG_GIT_PATH }}/$idirname"
+                    echo "---este es el fichero $i"
                     mkdir -p "../../${{ env.CONFIG_GIT_PATH }}/$idirname" && cp "$i" "$_"
+                    ls -la "../../${{ env.CONFIG_GIT_PATH }}/$idirname"
                   done
               else
                 echo "El cambio del fichero $i afecta a estos entornos: $idirname"
