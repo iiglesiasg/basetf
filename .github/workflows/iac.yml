@@ -98,7 +98,7 @@ jobs:
 
                 echo $JSON_STRING
                 echo "--------"
-                JSON_STRING = $(jq 'map(try(.affectedEnvs |= split(" ")))' $JSON_STRING)
+                JSON_STRING = $(jq 'map(try(.affectedEnvs |= split("\n")))' $JSON_STRING)
                 echo $JSON_STRING
               else
                 echo $IDIRNAME | tr " " "\n">> entornos.txt
