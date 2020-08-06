@@ -94,7 +94,8 @@ jobs:
                 echo $IDIRNAME | tr " " "\n">> entornos.txt
             fi
           done
-          AFFECTED_ENVS= $(sort entornos.txt | uniq -u)
+          sort entornos.txt | uniq -u
+          AFFECTED_ENVS= cat entornos.txt
           echo ::set-env name=AFFECTED_ENVS::${AFFECTED_ENVS}
         working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
 
