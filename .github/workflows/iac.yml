@@ -79,7 +79,7 @@ jobs:
           repository: ${{ env.CONFIG_GIT_REPO }}
           path: ${{ env.CONFIG_GIT_PATH }}
 
-      - name: 'identify & create environments folders'
+      - name: 'identify commits affected environments'
         run: |
           arr=(${{ env.FILES_COMMITTED }})
           for i in "${arr[@]}"
@@ -94,9 +94,8 @@ jobs:
                 echo $IDIRNAME | tr " " "\n">> entornos.txt
             fi
           done
-          sort entornos.txt | uniq -u
-          echo "------------"
-          cat entornos.txt
+          AFFECTED_ENVS=sort entornos.txt | uniq -u
+          echo ::set-env name=AFFECTED_ENVS::${AFFECTED_ENVS}
         working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
 
 
