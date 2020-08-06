@@ -83,7 +83,7 @@ jobs:
         run: |
           arr=(${{ env.FILES_COMMITTED }})
           # create json helper file
-           jq -n {"pairs": {}}' > files_envs_mapping.json
+           jq -n {"pairs": {}} > files_envs_mapping.json
 
           for i in "${arr[@]}"
           do
@@ -92,10 +92,10 @@ jobs:
             if [ $((CHILDDIRCOUNT - 1)) -gt 0 ]
               then
                 ENTORNOS=$(find $IDIRNAME -type d  -mindepth 1 -links 2 ! -empty)
-                jq '.pairs[.pairs | length] |= . +  {"comitedFile":"aitor.txt" , "affectedEnvs":["a2/dev"]}'
+                jq '.pairs[.pairs | length] |= . + {"comitedFile":"aitor.txt" , "affectedEnvs":["a2/dev"]}'
                 echo "--------"
                 cat files_envs_mapping.json
-                #JSON_STRING = $(jq 'map(try(.affectedEnvs |= split("\n")))' $JSON_STRING)
+
 
               else
                 echo $IDIRNAME | tr " " "\n">> entornos.txt
