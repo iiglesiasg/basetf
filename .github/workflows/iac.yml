@@ -94,8 +94,8 @@ jobs:
                 echo $IDIRNAME | tr " " "\n">> entornos.txt
             fi
           done
-        sort entornos.txt | uniq -u
-        cat entornos.txt
+          sort entornos.txt | uniq -u
+          cat entornos.txt
 
 
 
