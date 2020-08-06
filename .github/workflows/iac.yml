@@ -83,7 +83,7 @@ jobs:
         run: |
           arr=(${{ env.FILES_COMMITTED }})
           # create json helper file
-           jq -n {"pairs": {}} > files_envs_mapping.json
+          jq -n '{"pairs": []}' > files_envs_mapping.json
 
           for i in "${arr[@]}"
           do
