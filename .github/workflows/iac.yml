@@ -89,12 +89,16 @@ jobs:
             if [ $((CHILDDIRCOUNT - 1)) -gt 0 ]
               then
                 ENTORNOS=$(find $IDIRNAME -type d  -mindepth 1 -links 2 ! -empty)
-                #echo $ENTORNOS | tr " " "\n">> entornos.txt
+                ENVS = echo $ENTORNOS | tr " " "\n"
 
                 JSON_STRING=$( jq -n \
                                   --arg cf "$i" \
-                                  --arg envs "$ENTORNOS | tr " " "\n" \
+                                  --arg envs "$ENVS" \
                                   '{comitedFile: $cf, affectedEnvs: $envs}' )
+
+                echo $JSON_STRING
+                echo "--------"
+                JSON_STRING = $(jq 'map(try(.affectedEnvs |= split(" ")))' $JSON_STRING)
                 echo $JSON_STRING
               else
                 echo $IDIRNAME | tr " " "\n">> entornos.txt
