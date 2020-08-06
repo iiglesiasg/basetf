@@ -93,7 +93,7 @@ jobs:
 
                 JSON_STRING=$( jq -n \
                                   --arg cf "$i" \
-                                  --arg envs "$ENTORNOS" \
+                                  --arg envs "$ENTORNOS | tr " " "\n" \
                                   '{comitedFile: $cf, affectedEnvs: $envs}' )
                 echo $JSON_STRING
               else
