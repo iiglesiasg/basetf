@@ -53,22 +53,22 @@ jobs:
           TF_ENVIROMENTS_PATH: ${{ env.TF_ENVIROMENTS_PATH}}
 
       # Get the author of last commit
-      - name: 'Get the author of last commit'
-        run: |
-          GITHUB_USERNAME=$(git log -1 --pretty=format:'%an')
-          echo $GITHUB_USERNAME
-          echo ::set-env name=GITHUB_USERNAME::${GITHUB_USERNAME}
-        env:
-          TF_ENVIROMENTS_PATH: ${{ env.TF_ENVIROMENTS_PATH}}
+#      - name: 'Get the author of last commit'
+#        run: |
+#          GITHUB_USERNAME=$(git log -1 --pretty=format:'%an')
+#          echo $GITHUB_USERNAME
+#          echo ::set-env name=GITHUB_USERNAME::${GITHUB_USERNAME}
+#        env:
+#          TF_ENVIROMENTS_PATH: ${{ env.TF_ENVIROMENTS_PATH}}
 
       # Get the user email of last commit author
-      - name: 'Get the user email of last commit author'
-        run: |
-          USER_EMAIL=$(git log -1 --pretty=format:'%ae')
-          echo $USER_EMAIL
-          echo ::set-env name=USER_EMAIL::${USER_EMAIL}
-        env:
-          TF_ENVIROMENTS_PATH: ${{ env.TF_ENVIROMENTS_PATH}}
+#      - name: 'Get the user email of last commit author'
+#        run: |
+#          USER_EMAIL=$(git log -1 --pretty=format:'%ae')
+#          echo $USER_EMAIL
+#          echo ::set-env name=USER_EMAIL::${USER_EMAIL}
+#        env:
+#          TF_ENVIROMENTS_PATH: ${{ env.TF_ENVIROMENTS_PATH}}
 
       - name: 'Checkout the other Repo (environments real repo)'
         uses: actions/checkout@v2.3.1
@@ -79,68 +79,86 @@ jobs:
           repository: ${{ env.CONFIG_GIT_REPO }}
           path: ${{ env.CONFIG_GIT_PATH }}
 
-
-
-      - name: 'flatten files'
+      - name: 'identify & create environments folders'
         run: |
-          ls -a
-          arr=(${{ env.FILES_COMMITTED }})
-          for i in "${arr[@]}"
-            do
-              idirname="${i%/*}"
-              echo "xxxABP: idirname es: $idirname"
-              echo "xxxABP: estamos en: $i"
-              childdircount=$(find $idirname -maxdepth 1 -type d | wc -l)
-              echo
-              echo
-              if [ $((childdircount - 1)) -gt 0 ]
+        ARR=(${{ env.FILES_COMMITTED }})
+        for i in "${ARR[@]}"
+          do
+            IDIRNAME="${i%/*}"
+            CHILDDIRCOUNT=$(find $IDIRNAME -maxdepth 1 -type d | wc -l)
+            if [ $((CHILDDIRCOUNT - 1)) -gt 0 ]
               then
-                #find directories without children
                 ENTORNOS=$(find $idirname -type d  -mindepth 1 -links 2 ! -empty)
-                echo "El cambio del fichero $i afecta a estos entornos: $ENTORNOS"
                 echo $ENTORNOS | tr " " "\n">> entornos.txt
-                arr2=($ENTORNOS)
-                for k in "${arr2[@]}"
-                  do
-                    echo "estamos en $k y vamos a copiar $i"
-                    echo "---esta es la ruta ../../${{ env.CONFIG_GIT_PATH }}/$k"
-                    echo "---este es el fichero $i"
-                    mkdir -p "../../${{ env.CONFIG_GIT_PATH }}/$k" && cp "$i" "$_"
-                    ls -la "../../${{ env.CONFIG_GIT_PATH }}/$k"
-                  done
               else
-                echo "El cambio del fichero $i afecta a estos entornos: $idirname"
-                echo $idirname | tr " " "\n">> entornos.txt
-                #copy the file to the other repository folder
-                mkdir -p "../../${{ env.CONFIG_GIT_PATH }}/$idirname" && cp "$i" "$_"
-              fi
-            done
-          #remove duplicate environments
-          sort entornos.txt | uniq -u
-          echo "Para todos los ficheros el listado de entornos a los que tienes que lanzar PR es:"
-          cat entornos.txt
+                echo $IDIRNAME | tr " " "\n">> entornos.txt
+            fi
+          done
+        sort entornos.txt | uniq -u
+        cat entornos.txt
 
-          #iterar entornos y lanzar commits por cada uno
-          readarray arrEntornos < entornos.txt
-          cd ../../${{ env.CONFIG_GIT_PATH }}/
-          git config --global user.email "${{ env.USER_EMAIL }}"
-          git config --global user.name "${{ env.GITHUB_USERNAME }}"
-          for j in "${arrEntornos[@]}"
-            do
-              echo "--------> voy a crear una rama para $j"
-              git branch ${{ env.BRANCH_PREFIX }}$j
-              git checkout ${{ env.BRANCH_PREFIX }}$j
-              echo "0"
-              pwd
-              ls -la
-              git add $j
-              echo "1"
-              git commit --message "Update from github action ABP"
-              echo "2"
-              git push --set-upstream origin ${{ env.BRANCH_PREFIX }}$j
-              echo "3"
-              git checkout master
-            done
 
-          rm entornos.txt
-        working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
+
+#      - name: 'flatten files'
+#        run: |
+#          ls -a
+#          arr=(${{ env.FILES_COMMITTED }})
+#          for i in "${arr[@]}"
+#            do
+#              idirname="${i%/*}"
+#              echo "xxxABP: idirname es: $idirname"
+#              echo "xxxABP: estamos en: $i"
+#              childdircount=$(find $idirname -maxdepth 1 -type d | wc -l)
+#              echo
+#              echo
+#              if [ $((childdircount - 1)) -gt 0 ]
+#              then
+#                #find directories without children
+#                ENTORNOS=$(find $idirname -type d  -mindepth 1 -links 2 ! -empty)
+#                echo "El cambio del fichero $i afecta a estos entornos: $ENTORNOS"
+#                echo $ENTORNOS | tr " " "\n">> entornos.txt
+#                arr2=($ENTORNOS)
+#                for k in "${arr2[@]}"
+#                  do
+#                    echo "estamos en $k y vamos a copiar $i"
+#                    echo "---esta es la ruta ../../${{ env.CONFIG_GIT_PATH }}/$k"
+#                    echo "---este es el fichero $i"
+#                    mkdir -p "../../${{ env.CONFIG_GIT_PATH }}/$k" && cp "$i" "$_"
+#                    ls -la "../../${{ env.CONFIG_GIT_PATH }}/$k"
+#                  done
+#              else
+#                echo "El cambio del fichero $i afecta a estos entornos: $idirname"
+#                echo $idirname | tr " " "\n">> entornos.txt
+#                #copy the file to the other repository folder
+#                mkdir -p "../../${{ env.CONFIG_GIT_PATH }}/$idirname" && cp "$i" "$_"
+#              fi
+#            done
+#          #remove duplicate environments
+#          sort entornos.txt | uniq -u
+#          echo "Para todos los ficheros el listado de entornos a los que tienes que lanzar PR es:"
+#          cat entornos.txt
+#
+#          #iterar entornos y lanzar commits por cada uno
+#          readarray arrEntornos < entornos.txt
+#          cd ../../${{ env.CONFIG_GIT_PATH }}/
+#          git config --global user.email "${{ env.USER_EMAIL }}"
+#          git config --global user.name "${{ env.GITHUB_USERNAME }}"
+#          for j in "${arrEntornos[@]}"
+#            do
+#              echo "--------> voy a crear una rama para $j"
+#              git branch ${{ env.BRANCH_PREFIX }}$j
+#              git checkout ${{ env.BRANCH_PREFIX }}$j
+#              echo "0"
+#              pwd
+#              ls -la
+#              git add $j
+#              echo "1"
+#              git commit --message "Update from github action ABP"
+#              echo "2"
+#              git push --set-upstream origin ${{ env.BRANCH_PREFIX }}$j
+#              echo "3"
+#              git checkout master
+#            done
+#
+#          rm entornos.txt
+#        working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
