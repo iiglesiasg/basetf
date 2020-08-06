@@ -89,7 +89,7 @@ jobs:
             if [ $((CHILDDIRCOUNT - 1)) -gt 0 ]
               then
                 ENTORNOS=$(find $IDIRNAME -type d  -mindepth 1 -links 2 ! -empty)
-                ENVS = echo $ENTORNOS | tr " " "\n"
+                ENVS=$(echo $ENTORNOS | tr " " "\n")
 
                 JSON_STRING=$( jq -n \
                                   --arg cf "$i" \
