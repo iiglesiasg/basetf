@@ -95,6 +95,7 @@ jobs:
             fi
           done
           sort entornos.txt | uniq -u
+          echo "----------"
           AFFECTED_ENVS= cat entornos.txt
           echo ::set-env name=AFFECTED_ENVS::${AFFECTED_ENVS}
         working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
