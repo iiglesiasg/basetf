@@ -17,7 +17,7 @@ rec_function()
         mkdir $DEPLOY_FOLDER/$ENV_FOLDER
         mv ${directory::-1} $DEPLOY_FOLDER/$ENV_FOLDER/
       else
-        for envfile in $(ls $1 | grep tfvars);
+        for envfile in $(ls $1 | grep ".tf");
         do          	       
           echo "file $envfile"
           mv $1/$envfile $directory;      
