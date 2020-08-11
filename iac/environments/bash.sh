@@ -86,6 +86,7 @@ rec_function()
         cd $WORKING_DIR
         mv ${directory::-1}.tf $DEPLOY_FOLDER/$ENV_FOLDER/
         rec_function_tfvars $1 $DEPLOY_FOLDER $ENV_FOLDER
+        cd $WORKING_DIR
       else
         for envfile in $(ls $1/*.tf);
         do          	       
