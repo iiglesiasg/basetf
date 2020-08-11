@@ -84,7 +84,7 @@ rec_function()
         # mkdir $DEPLOY_FOLDER/$ENV_FOLDER
         echo "wd: "$WORKING_DIR" pwd "$(pwd) 
         cd $WORKING_DIR
-        mv ${directory::-1}/*.tf $DEPLOY_FOLDER/$ENV_FOLDER/
+        mv ${directory::-1}.tf $DEPLOY_FOLDER/$ENV_FOLDER/
         rec_function_tfvars $1 $DEPLOY_FOLDER $ENV_FOLDER
       else
         for envfile in $(ls $1/*.tf);
