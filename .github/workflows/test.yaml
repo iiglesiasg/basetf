@@ -77,6 +77,9 @@ jobs:
       - name: 'Magia'
         run: |
           mv iac/environments/bash.sh .
+          ls -lsa | grep bash
+          sudo chmod +x bash.sh
+          ls -lsa | grep bash
           ./bash.sh $(pwd)/configrepo
                     
            
