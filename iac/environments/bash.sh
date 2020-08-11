@@ -52,7 +52,7 @@ prepare_branch(){
   git branch $2
   git checkout $2
   rm -r $1/$2 -f
-  mkdir $1/$2
+  mkdir $1/$2/$($2 | tr '_' '/')
 }
 
 ## Subimos por los directorios mientras vamos propagando los tf. Cuando no se puede subir
