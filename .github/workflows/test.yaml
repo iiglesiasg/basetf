@@ -1,0 +1,180 @@
+---
+name: test Workflow
+
+on:
+  workflow_dispatch:
+
+env:
+  PROJECT_AUTO_TFVARS: 'project.auto.tfvars'
+  TF_WORKING_DIR: './iac'
+  ENVIRONMENTS_WORKING_DIR: './iac/environments/'
+  TF_ACTION_VERSION: '0.12.28'
+  TF_ENVIROMENTS_PATH: 'environments/'
+  CONFIG_GIT_REPO: 'aitorbalbas/basetfdeploy'
+  CONFIG_GIT_PATH: 'configrepo'
+  USER_EMAIL: 'aitorbalbas@gmail.com'
+  GITHUB_USERNAME: 'aitorbalbas'
+  BRANCH_PREFIX: 'promotions/'
+
+jobs:
+  validate_terraform:
+    name: Terraform
+    ## TODO: no latest!!!
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: 'Checkout Repo'
+        uses: actions/checkout@v2.3.1
+        with:
+          # Fetch all history for all tags and branches
+          fetch-depth: 0
+
+      # Get files commited
+      - name: 'Get files commited between two pushes (1+ commits)'
+        run: |
+          export COMMIT_ID_CURRENT=$(jq .after $GITHUB_EVENT_PATH --raw-output)
+          export COMMIT_ID_BEFORE=$(jq .before $GITHUB_EVENT_PATH --raw-output)
+          #echo "FILES_COMMITTED"
+          FILES_COMMITTED=$(git diff --name-only $COMMIT_ID_CURRENT $COMMIT_ID_BEFORE|sort|uniq|grep -i ${TF_ENVIROMENTS_PATH}|awk -F${TF_ENVIROMENTS_PATH} '{ print $2 }')
+          echo $FILES_COMMITTED
+          echo ::set-env name=FILES_COMMITTED::${FILES_COMMITTED}
+        env:
+          TF_ENVIROMENTS_PATH: ${{ env.TF_ENVIROMENTS_PATH}}
+
+      # Get the author of last commit
+#      - name: 'Get the author of last commit'
+#        run: |
+#          GITHUB_USERNAME=$(git log -1 --pretty=format:'%an')
+#          echo $GITHUB_USERNAME
+#          echo ::set-env name=GITHUB_USERNAME::${GITHUB_USERNAME}
+#        env:
+#          TF_ENVIROMENTS_PATH: ${{ env.TF_ENVIROMENTS_PATH}}
+
+      # Get the user email of last commit author
+#      - name: 'Get the user email of last commit author'
+#        run: |
+#          USER_EMAIL=$(git log -1 --pretty=format:'%ae')
+#          echo $USER_EMAIL
+#          echo ::set-env name=USER_EMAIL::${USER_EMAIL}
+#        env:
+#          TF_ENVIROMENTS_PATH: ${{ env.TF_ENVIROMENTS_PATH}}
+
+      - name: 'Checkout the other Repo (environments real repo)'
+        uses: actions/checkout@v2.3.1
+        with:
+          # Workflows triggered by pull_request events will by default check out a merge commit. To prevent the merge commit being included in created pull requests it is necessary to checkout the head_ref.
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.ABP_PERSONAL_TOKEN }}
+          repository: ${{ env.CONFIG_GIT_REPO }}
+          path: ${{ env.CONFIG_GIT_PATH }}
+
+      - name: 'identify commits affected environments'
+        run: |
+          pwd
+          ls -lsa
+           
+
+#    - name: 'identify commits affected environments'
+#       run: |
+#         arr=(${{ env.FILES_COMMITTED }})
+#         # create json helper file
+#         jq -n '{"pairs": []}' > files_envs_mapping.json
+#
+#         for i in "${arr[@]}"
+#         do
+#           IDIRNAME="${i%/*}"
+#           CHILDDIRCOUNT=$(find $IDIRNAME -maxdepth 1 -type d | wc -l)
+#           if [ $((CHILDDIRCOUNT - 1)) -gt 0 ]
+#             then
+#               ENTORNOS=$(find $IDIRNAME -type d  -mindepth 1 -links 2 ! -empty)
+#               #arrEntornos= ($ENTORNOS)
+#               jq --arg item "$i" --arg envs "juanito" '.pairs[.pairs | length] |= . + {"comitedFile":$item , "affectedEnvs":[$envs]}' files_envs_mapping.json > files_envs_mapping.json.tmp && cp files_envs_mapping.json.tmp files_envs_mapping.json
+#               echo "--------"
+#               cat files_envs_mapping.json
+#
+#             else
+#               echo "epa"
+#               #echo $IDIRNAME | tr " " "\n">> entornos.txt
+#           fi
+#         done
+#         #sort entornos.txt | uniq -u
+#
+#         #AFFECTED_ENVS= cat entornos.txt
+#         #echo ::set-env name=AFFECTED_ENVS::${AFFECTED_ENVS}
+#       working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
+#
+#     - name: 'Create or update environments folders in config repo'
+#       run: |
+#         arr=(${{ env.AFFECTED_ENVS }})
+#         for i in "${arr[@]}"
+#           do
+#
+#           done
+#       working-directory: ${{ env.CONFIG_GIT_PATH}}
+
+
+
+#      - name: 'flatten files'
+#        run: |
+#          ls -a
+#          arr=(${{ env.FILES_COMMITTED }})
+#          for i in "${arr[@]}"
+#            do
+#              idirname="${i%/*}"
+#              echo "xxxABP: idirname es: $idirname"
+#              echo "xxxABP: estamos en: $i"
+#              childdircount=$(find $idirname -maxdepth 1 -type d | wc -l)
+#              echo
+#              echo
+#              if [ $((childdircount - 1)) -gt 0 ]
+#              then
+#                #find directories without children
+#                ENTORNOS=$(find $idirname -type d  -mindepth 1 -links 2 ! -empty)
+#                echo "El cambio del fichero $i afecta a estos entornos: $ENTORNOS"
+#                echo $ENTORNOS | tr " " "\n">> entornos.txt
+#                arr2=($ENTORNOS)
+#                for k in "${arr2[@]}"
+#                  do
+#                    echo "estamos en $k y vamos a copiar $i"
+#                    echo "---esta es la ruta ../../${{ env.CONFIG_GIT_PATH }}/$k"
+#                    echo "---este es el fichero $i"
+#                    mkdir -p "../../${{ env.CONFIG_GIT_PATH }}/$k" && cp "$i" "$_"
+#                    ls -la "../../${{ env.CONFIG_GIT_PATH }}/$k"
+#                  done
+#              else
+#                echo "El cambio del fichero $i afecta a estos entornos: $idirname"
+#                echo $idirname | tr " " "\n">> entornos.txt
+#                #copy the file to the other repository folder
+#                mkdir -p "../../${{ env.CONFIG_GIT_PATH }}/$idirname" && cp "$i" "$_"
+#              fi
+#            done
+#          #remove duplicate environments
+#          sort entornos.txt | uniq -u
+#          echo "Para todos los ficheros el listado de entornos a los que tienes que lanzar PR es:"
+#          cat entornos.txt
+#
+#          #iterar entornos y lanzar commits por cada uno
+#          readarray arrEntornos < entornos.txt
+#          cd ../../${{ env.CONFIG_GIT_PATH }}/
+#          git config --global user.email "${{ env.USER_EMAIL }}"
+#          git config --global user.name "${{ env.GITHUB_USERNAME }}"
+#          for j in "${arrEntornos[@]}"
+#            do
+#              echo "--------> voy a crear una rama para $j"
+#              git branch ${{ env.BRANCH_PREFIX }}$j
+#              git checkout ${{ env.BRANCH_PREFIX }}$j
+#              echo "0"
+#              pwd
+#              ls -la
+#              git add $j
+#              echo "1"
+#              git commit --message "Update from github action ABP"
+#              echo "2"
+#              git push --set-upstream origin ${{ env.BRANCH_PREFIX }}$j
+#              echo "3"
+#              git checkout master
+#            done
+#
+#          rm entornos.txt
+#        working-directory: ${{ env.ENVIRONMENTS_WORKING_DIR}}
