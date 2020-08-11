@@ -10,7 +10,7 @@ push_branch(){
   git add .
   git commit -m "(BOT) commit"
   diff_number=$(git diff --name-only master | wc -l)
-  if $diff_number -gt 0;
+  if [ $diff_number -gt 0 ];
     then
       git push -u origin $2;
     fi;
@@ -80,7 +80,7 @@ rec_function()
         # rm -r $DEPLOY_FOLDER/$ENV_FOLDER -f
         # mkdir $DEPLOY_FOLDER/$ENV_FOLDER
         echo "wd: "$WORKING_DIR" pwd "$(pwd) 
-        cd WORKING_DIR
+        cd $WORKING_DIR
         mv ${directory::-1} $DEPLOY_FOLDER/$ENV_FOLDER/
         rec_function_tfvars $1 $DEPLOY_FOLDER $ENV_FOLDER
       else

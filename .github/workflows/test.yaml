@@ -77,9 +77,9 @@ jobs:
       - name: 'Magia'
         run: |
           mv iac/environments/bash.sh .
-          ls -lsa | grep bash
           sudo chmod +x bash.sh
-          ls -lsa | grep bash
+          git config --global user.email "${{ env.USER_EMAIL }}"
+          git config --global user.name "${{ env.GITHUB_USERNAME }}"
           ./bash.sh $(pwd)/configrepo
                     
            
