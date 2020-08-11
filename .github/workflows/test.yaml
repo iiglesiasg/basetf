@@ -72,7 +72,7 @@ jobs:
       - name: 'identify commits affected environments'
         run: |
           pwd
-          ls -lsa
+          ls -lsa configrepo
            
 
 #    - name: 'identify commits affected environments'
