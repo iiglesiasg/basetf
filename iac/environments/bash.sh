@@ -1,5 +1,5 @@
 #!/bin/bash
-DEPLOY_FOLDER=test
+DEPLOY_FOLDER=$1
 
 ## En caso de haber diferencias con la rama master, subimos la rama al repositorio.
 ## ARG:

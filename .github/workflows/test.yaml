@@ -69,10 +69,16 @@ jobs:
           repository: ${{ env.CONFIG_GIT_REPO }}
           path: ${{ env.CONFIG_GIT_PATH }}
 
-      - name: 'identify commits affected environments'
+      - name: 'Debug'
         run: |
           pwd
           ls -lsa configrepo
+
+      - name: 'Magia'
+        run: |
+          mv iac/environments/bash.sh .
+          ./bash.sh $(pwd)/configrepo
+                    
            
 
 #    - name: 'identify commits affected environments'
