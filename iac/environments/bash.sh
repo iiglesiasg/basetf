@@ -54,7 +54,7 @@ prepare_branch(){
   rm -r $1/$2 -f
   last_dir=$(echo "$2" | tr '_' '/')
   echo "last dir "$last_dir
-  mkdir $1/$2/$last_dir
+  mkdir -p $1/$2/$last_dir
 }
 
 ## Subimos por los directorios mientras vamos propagando los tf. Cuando no se puede subir
