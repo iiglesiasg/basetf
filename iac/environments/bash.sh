@@ -12,7 +12,7 @@ push_branch(){
   diff_number=$(git diff --name-only master | wc -l)
   if [ $diff_number -gt 0 ];
     then
-      git push -u origin $2;
+      git push --set-upstream origin $2;
     fi;
 }
 
@@ -37,7 +37,7 @@ rec_function_tfvars(){
       then
         push_branch $2 $3;
       else
-        rec_function_tfvars $parent_folder $2;
+        rec_function_tfvars $parent_folder $2 $3;
       fi;
 }
 
