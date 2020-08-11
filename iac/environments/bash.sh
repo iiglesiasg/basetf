@@ -52,7 +52,7 @@ prepare_branch(){
   git branch $2
   git checkout $2
   rm -r $1/$2 -f
-  last_dir=$($2 | tr '_' '/')
+  last_dir=$(echo "$2" | tr '_' '/')
   echo "last dir "$last_dir
   mkdir $1/$2/$last_dir
 }
