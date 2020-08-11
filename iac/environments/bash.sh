@@ -29,7 +29,7 @@ rec_function_tfvars(){
   
     for filename in $(ls $1 | grep tfvars);
       do 
-        echo $2/$3/$1/;
+        echo "move to "$2/$3/$1/;
         mv $1/$filename $2/$3/$1/;
       done;   
       parent_folder=$(echo $1 | rev | cut -d '/' -f2- | rev );    
@@ -46,6 +46,7 @@ rec_function_tfvars(){
 #### $1: Directorio que contiene el repositorio destino.
 #### $2: Nombre de la rama y carpeta a crear
 prepare_branch(){
+  echo "prepare_branch arg1: "$1" arg2: "$2
   cd $1
   git checkout master
   git push origin --delete $2
@@ -53,10 +54,24 @@ prepare_branch(){
   git checkout $2
   rm -r $1/$2 -f
   last_dir=$(echo "$2" | tr '_' '/')
-  echo "last dir "$last_dir
   mkdir -p $1/$2/$last_dir
 }
 
+flatten_tf(){
+  echo "flatten_tf arg1: "$1
+  str_to_replace=$(echo "$(pwd)" | tr '/' '_')
+  for link in $(ls -lrt $1/*.tf | grep ^l | awk '{print $11}');
+  do
+    full_path=$(echo "$link" | tr '/' '_')
+    tf_name=$(echo ${full_path//$str_to_replace'_'})
+    mv $link $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
+  done;
+  find $1 -type l | xargs rm
+  for file in $1/*.tf;
+    tf_name=$(echo $file | tr '/' '_')
+    mv $file $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
+  done;
+}
 ## Subimos por los directorios mientras vamos propagando los tf. Cuando no se puede subir
 ## mas directorios podemos inferir el environment(el path relativo desde que comenzamos a
 ## iterar) que dara nombre a una carpeta y a una rama en el repositorio destino. En este
@@ -76,7 +91,7 @@ rec_function()
     #  echo "directory $directory"
       if [ $(echo "$directory" | tr '/' '_') = $(echo "$X" | tr '/' '_') ];
       then 
-        echo "fin root $directory"
+        echo "fin root $directory and arg1: $1"
         ENV_FOLDER=$(echo "$1" | tr '/' '_');
         WORKING_DIR=$(pwd)
         prepare_branch $DEPLOY_FOLDER $ENV_FOLDER
@@ -84,14 +99,19 @@ rec_function()
         # mkdir $DEPLOY_FOLDER/$ENV_FOLDER
         echo "wd: "$WORKING_DIR" pwd "$(pwd) 
         cd $WORKING_DIR
-        mv ${directory::-1}.tf $DEPLOY_FOLDER/$ENV_FOLDER/
+        flatten_tf $1
+     #   for tf_file in $(ls ${directory::-1}.tf | grep );
+     #   do 
+     #     mv 
+     #     mv ${directory::-1}.tf $DEPLOY_FOLDER/$ENV_FOLDER/;
+     #   done;
         rec_function_tfvars $1 $DEPLOY_FOLDER $ENV_FOLDER
         cd $WORKING_DIR
       else
         for envfile in $(ls $1/*.tf);
         do          	       
           echo "file $envfile"
-          cp $envfile $directory;      
+          ln -s $envfile $directory;      
         done;
         rec_function ${directory::-1};
       fi;
