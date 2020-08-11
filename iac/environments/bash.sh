@@ -48,11 +48,13 @@ rec_function_tfvars(){
 prepare_branch(){
   cd $1
   git checkout master
-  git push --delete $2
+  git push origin --delete $2
   git branch $2
   git checkout $2
   rm -r $1/$2 -f
-  mkdir $1/$2/$($2 | tr '_' '/')
+  last_dir=$($2 | tr '_' '/')
+  echo "last dir "$last_dir
+  mkdir $1/$2/$last_dir
 }
 
 ## Subimos por los directorios mientras vamos propagando los tf. Cuando no se puede subir
