@@ -68,7 +68,7 @@ flatten_tf(){
   done;
   find $1 -type l | xargs rm
   for file in $1/*.tf;
-    tf_name=$(echo $file | tr '/' '_')
+    tf_name=$(echo "$file" | tr '/' '_')
     mv $file $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
   done;
 }
