@@ -1,6 +1,6 @@
 #!/bin/bash
 DEPLOY_FOLDER=$1
-
+echo "DF "$DEPLOY_FOLDER
 ## En caso de haber diferencias con la rama master, subimos la rama al repositorio.
 ## ARG:
 #### $1: Directorio que contiene el repositorio destino.
@@ -29,6 +29,7 @@ rec_function_tfvars(){
   
     for filename in $(ls $1 | grep tfvars);
       do 
+        echo $2/$3/$1/;
         mv $1/$filename $2/$3/$1/;
       done;   
       parent_folder=$(echo $1 | rev | cut -d '/' -f2- | rev );    
@@ -87,7 +88,7 @@ rec_function()
         for envfile in $(ls $1/*.tf);
         do          	       
           echo "file $envfile"
-          mv $1/$envfile $directory;      
+          mv $envfile $directory;      
         done;
         rec_function ${directory::-1};
       fi;

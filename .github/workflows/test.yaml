@@ -68,6 +68,8 @@ jobs:
           token: ${{ secrets.ABP_PERSONAL_TOKEN }}
           repository: ${{ env.CONFIG_GIT_REPO }}
           path: ${{ env.CONFIG_GIT_PATH }}
+          fetch-depth: 0
+
 
       - name: 'Debug'
         run: |
@@ -75,11 +77,12 @@ jobs:
           ls -lsa configrepo
 
       - name: 'Magia'
+        uses: actions/checkout@v2.3.1
         run: |
           mv iac/environments/bash.sh .
           sudo chmod +x bash.sh
-          git config --global user.email "${{ env.USER_EMAIL }}"
-          git config --global user.name "${{ env.GITHUB_USERNAME }}"
+          # git config --global user.email "${{ env.USER_EMAIL }}"
+          # git config --global user.name "${{ env.GITHUB_USERNAME }}"
           ./bash.sh $(pwd)/configrepo
                     
            
