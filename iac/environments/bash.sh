@@ -29,10 +29,7 @@ push_branch(){
 rec_function_tfvars(){
     echo "rec_function_tfvars arg1: $1 arg2: $2 arg3: $3 pwd: $(pwd)"
     for filename in $(ls $1 | grep tfvars);
-      do 
-        echo "move $filename to "$2/$3/$1/;
-        ls $2/$3/$1
-        
+      do
         mv $1/$filename $2/$3/$1/;
       done;   
       parent_folder=$(echo $1 | rev | cut -d '/' -f2- | rev );    
@@ -66,7 +63,6 @@ prepare_branch(){
   # git checkout $2
   # rm -r $1/$2 -f
   last_dir=$(echo "$2" | tr '_' '/')
-  echo "directorio a crear $1/$2/environments/"$last_dir
   mkdir -p $1/$2/"environments/"$last_dir;
 }
 
@@ -111,8 +107,7 @@ rec_function()
     do     
       if [ $(echo "$directory" | tr '/' '_') = $(echo "$X" | tr '/' '_') ];
       then 
-        ENV_FOLDER=$(echo "$1" | cut -d '/' -f2- | tr '/' '_');
-        
+        ENV_FOLDER=$(echo "$1" | cut -d '/' -f2- | tr '/' '_');        
         prepare_branch $DEPLOY_FOLDER $ENV_FOLDER
         cd $WORKING_DIR
         flatten_tf $1
