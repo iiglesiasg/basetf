@@ -31,7 +31,8 @@ rec_function_tfvars(){
     for filename in $(ls $1 | grep tfvars);
       do 
         echo "move $filename to "$2/$3/$1/;
-        mv $filename $2/$3/$1/;
+        ls $2/$3/$1/
+        cp $1/$filename $2/$3/$1/;
       done;   
       parent_folder=$(echo $1 | rev | cut -d '/' -f2- | rev );    
       if [ ${#1} -eq ${#parent_folder} ]; 
@@ -45,7 +46,7 @@ rec_function_tfvars(){
 ## En el repositorio destino, borramos la rama destino en caso de haberla y la recreamos en base a master
 ## ARG:
 #### $1: Directorio que contiene el repositorio destino.
-#### $2: Nombre de la rama y carpeta a crear
+#### $2: Nombre de la carpeta a crear, tambien se infiere el nombre de la rama.
 prepare_branch(){
   echo "prepare_branch arg1: "$1" arg2: "$2
   cd $1
@@ -64,7 +65,8 @@ prepare_branch(){
   # git checkout $2
   # rm -r $1/$2 -f
   last_dir=$(echo "$2" | tr '_' '/')
-  mkdir -p $1/$2/$last_dir
+  echo $last_dir
+  mkdir -p $1/$2/$last_dir;
 }
 
 ## Aplanamos los TF en el repositorio destino, en la carpeta que le corresponde por ambiente. El nombre del
