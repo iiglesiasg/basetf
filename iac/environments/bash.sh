@@ -66,9 +66,11 @@ flatten_tf(){
     tf_name=$(echo ${full_path//$str_to_replace'_'})    
     original_file=$(readlink -f $link)
     echo "link $link original_file $original_file"
-    cp $original_file $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
+    cp $link $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
   done;
+  ls -lsrt $1
   find $1 -type l | xargs rm
+  ls -lsrt $1
   for file in $1/*.tf;
   do
     tf_name=$(echo "$file" | tr '/' '_')
