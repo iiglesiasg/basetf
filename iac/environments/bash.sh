@@ -49,10 +49,11 @@ prepare_branch(){
   echo "prepare_branch arg1: "$1" arg2: "$2
   cd $1
   git checkout master
-  git push origin --delete $2
-  git branch $2
-  git checkout $2
-  rm -r $1/$2 -f
+  # git push origin --delete $2
+  if [ $(git branch -l | grep $2 | wc -l) -eq 0 ]; then git branch $2; fi;
+  # git branch $2
+   git checkout $2
+  # rm -r $1/$2 -f
   last_dir=$(echo "$2" | tr '_' '/')
   mkdir -p $1/$2/$last_dir
 }
