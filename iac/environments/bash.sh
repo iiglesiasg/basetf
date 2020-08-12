@@ -65,7 +65,7 @@ prepare_branch(){
   # git checkout $2
   # rm -r $1/$2 -f
   last_dir=$(echo "$2" | tr '_' '/')
-  echo $last_dir
+  echo "directorio a crear $1/$2/$last_dir"
   mkdir -p $1/$2/$last_dir;
 }
 
