@@ -31,7 +31,7 @@ rec_function_tfvars(){
     for filename in $(ls $1 | grep tfvars);
       do 
         echo "move $filename to "$2/$3/$1/;
-        ls $2/$3/$1/
+        ls $2/$3/$1
         
         mv $1/$filename $2/$3/$1/;
       done;   
@@ -67,7 +67,7 @@ prepare_branch(){
   # rm -r $1/$2 -f
   last_dir=$(echo "$2" | tr '_' '/')
   echo "directorio a crear $1/$2/environments/"$last_dir
-  mkdir -p $1/$2/$last_dir;
+  mkdir -p $1/$2/"environments/"$last_dir;
 }
 
 ## Aplanamos los TF en el repositorio destino, en la carpeta que le corresponde por ambiente. El nombre del
