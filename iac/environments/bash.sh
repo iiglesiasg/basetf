@@ -31,7 +31,7 @@ rec_function_tfvars(){
     for filename in $(ls $1 | grep tfvars);
       do 
         echo "move $filename to "$2/$3/$1/;
-        mv $1/$filename $2/$3/$1/;
+        mv $filename $2/$3/$1/;
       done;   
       parent_folder=$(echo $1 | rev | cut -d '/' -f2- | rev );    
       if [ ${#1} -eq ${#parent_folder} ]; 
