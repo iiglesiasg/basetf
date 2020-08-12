@@ -57,26 +57,31 @@ prepare_branch(){
   mkdir -p $1/$2/$last_dir
 }
 
+## Aplanamos los TF en el repositorio destino, en la carpeta que le corresponde por ambiente. 
+## ARG:
+#### $1:Directorio de busqueda
 flatten_tf(){
   echo "flatten_tf arg1: $1 pwd "$(pwd)
   str_to_replace=$(echo "$(pwd)" | tr '/' '_')
-  for link in $(ls -lrt $1/*.tf | grep ^l | awk '{print $9}');
-  do
-    full_path=$(echo "$link" | tr '/' '_')
-    tf_name=$(echo ${full_path//$str_to_replace'_'})  
-    cp $link $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
-  done;
-  find $1 -type l | xargs rm
+ # for link in $(ls -lrt $1/*.tf | grep ^l | awk '{print $9}');
+ # do
+ #   full_path=$(echo "$link" | tr '/' '_')
+ #   tf_name=$(echo ${full_path//$str_to_replace'_'})  
+ #   echo "fullpath: $full_path  tf_name: $tf_name"
+ #   cp $link $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
+ # done;
+ # find $1 -type l | xargs rm
   for file in $1/*.tf;
   do
     tf_name=$(echo "$file" | tr '/' '_')
-    mv $file $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
+    cp $file $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
   done;
 }
-## Subimos por los directorios mientras vamos propagando los tf. Cuando no se puede subir
-## mas directorios podemos inferir el environment(el path relativo desde que comenzamos a
-## iterar) que dara nombre a una carpeta y a una rama en el repositorio destino. En este
-## punto ya tenemos aplanados los archivos TF que volcamos sobre la carpeta creada.
+
+## Subimos por los directorios mientras vamos propagando los TF con punteros. Cuando no se puede subir
+## mas directorios se infiere el environment(el path relativo desde que comenzamos a
+## iterar) que da nombre a una carpeta y a una rama en el repositorio destino. Aplanamos los TF y
+## volcamos sobre la carpeta creada.
 ## ARG: 
 #### $1: Directorio desde donde comenzar a iterar. Debe ser 'environments' para la estructura actual
 ## CALL:
