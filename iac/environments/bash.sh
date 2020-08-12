@@ -50,13 +50,13 @@ prepare_branch(){
   cd $1
   git checkout master
   # git push origin --delete $2
-  git branch -a
-  if [ $(git branch -a | grep "$(echo "$2")" | wc -l) -eq 0 ]; 
+  branch_name="promotions_$2"  
+  if [ $(git branch -a | grep "$(echo "$branch_name")" | wc -l) -eq 0 ]; 
   then
-    git branch $2
-    git checkout $2;
+    git branch $branch_name
+    git checkout $branch_name;
   else 
-    git checkout $2
+    git checkout $branch_name
     git pull;
   fi;
   # git branch $2
