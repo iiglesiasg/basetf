@@ -70,7 +70,7 @@ flatten_tf(){
   for file in $1/*.tf;
   do
     tf_name=$(echo "$file" | tr '/' '_')
-    mv $file $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
+    cp $file $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
   done;
 }
 ## Subimos por los directorios mientras vamos propagando los tf. Cuando no se puede subir
