@@ -12,7 +12,7 @@ push_branch(){
   diff_number=$(git diff --name-only master | wc -l)
   if [ $diff_number -gt 0 ];
     then
-      git push --set-upstream origin $2;
+      git push --set-upstream origin "promotions_$2";
     fi;
 }
 
