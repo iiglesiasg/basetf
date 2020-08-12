@@ -32,7 +32,8 @@ rec_function_tfvars(){
       do 
         echo "move $filename to "$2/$3/$1/;
         ls $2/$3/$1/
-        cp $1/$filename $2/$3/$1/;
+        
+        mv $1/$filename $2/$3/$1/;
       done;   
       parent_folder=$(echo $1 | rev | cut -d '/' -f2- | rev );    
       if [ ${#1} -eq ${#parent_folder} ]; 
@@ -65,7 +66,7 @@ prepare_branch(){
   # git checkout $2
   # rm -r $1/$2 -f
   last_dir=$(echo "$2" | tr '_' '/')
-  echo "directorio a crear $1/$2/$last_dir"
+  echo "directorio a crear $1/$2/environments/"$last_dir
   mkdir -p $1/$2/$last_dir;
 }
 
@@ -111,7 +112,7 @@ rec_function()
       if [ $(echo "$directory" | tr '/' '_') = $(echo "$X" | tr '/' '_') ];
       then 
         ENV_FOLDER=$(echo "$1" | cut -d '/' -f2- | tr '/' '_');
-        WORKING_DIR=$(pwd)
+        
         prepare_branch $DEPLOY_FOLDER $ENV_FOLDER
         cd $WORKING_DIR
         flatten_tf $1
@@ -129,4 +130,5 @@ rec_function()
 }
 
 cd iac
+WORKING_DIR=$(pwd)
 rec_function environments
