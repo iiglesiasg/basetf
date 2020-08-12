@@ -50,7 +50,8 @@ prepare_branch(){
   cd $1
   git checkout master
   # git push origin --delete $2
-  if [ $(git branch -l | grep $2 | wc -l) -eq 0 ]; 
+  git branch -l
+  if [ $(git branch -l | grep "$(echo "$2")" | wc -l) -eq 0 ]; 
   then
     git branch $2
     git checkout $2;
