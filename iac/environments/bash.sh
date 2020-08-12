@@ -73,7 +73,9 @@ flatten_tf(){
  # find $1 -type l | xargs rm
   for file in $1/*.tf;
   do
-    tf_name=$(echo "$file" | tr '/' '_')
+    full_path_real_value=$(echo "$(readlink -f $file)" | tr '/' '_')
+    tf_name=$(echo ${full_path_real_value//$str_to_replace'_'})
+    # tf_name=$(echo "$file" | tr '/' '_')
     cp $file $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
   done;
 }
