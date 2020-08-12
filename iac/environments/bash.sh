@@ -64,7 +64,6 @@ flatten_tf(){
   do
     full_path=$(echo "$link" | tr '/' '_')
     tf_name=$(echo ${full_path//$str_to_replace'_'})  
-    echo "link: $link"
     cp $link $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
   done;
   find $1 -type l | xargs rm
