@@ -58,19 +58,16 @@ prepare_branch(){
 }
 
 flatten_tf(){
-  echo "flatten_tf arg1: "$1
+  echo "flatten_tf arg1: $1 pwd "$(pwd)
   str_to_replace=$(echo "$(pwd)" | tr '/' '_')
   for link in $(ls -lrt $1/*.tf | grep ^l | awk '{print $11}');
   do
     full_path=$(echo "$link" | tr '/' '_')
-    tf_name=$(echo ${full_path//$str_to_replace'_'})    
-    original_file=$(readlink -f $link)
-    echo "link $link original_file $original_file"
+    tf_name=$(echo ${full_path//$str_to_replace'_'})        
+    cat $(pwd)/$link
     cp $link $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
   done;
-  ls -lsrt $1
   find $1 -type l | xargs rm
-  ls -lsrt $1
   for file in $1/*.tf;
   do
     tf_name=$(echo "$file" | tr '/' '_')
