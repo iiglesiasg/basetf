@@ -63,8 +63,8 @@ flatten_tf(){
   for link in $(ls -lrt $1/*.tf | grep ^l | awk '{print $9}');
   do
     full_path=$(echo "$link" | tr '/' '_')
-    tf_name=$(echo ${full_path//$str_to_replace'_'})        
-    find . | grep "$link"
+    tf_name=$(echo ${full_path//$str_to_replace'_'})  
+    echo "link: $link"
     cp $link $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
   done;
   find $1 -type l | xargs rm
@@ -86,33 +86,22 @@ flatten_tf(){
 #### rec_function: Llamada recursiva
 rec_function() 
 {
-    X=$1/*/
-   # echo "X $X"    
+    echo "rec_function ARG1: $1"
+    X=$1/*/  
     for directory in $X;
-    do 
-    #  echo "directory $directory"
+    do     
       if [ $(echo "$directory" | tr '/' '_') = $(echo "$X" | tr '/' '_') ];
       then 
-        echo "fin root $directory and arg1: $1"
         ENV_FOLDER=$(echo "$1" | tr '/' '_');
         WORKING_DIR=$(pwd)
         prepare_branch $DEPLOY_FOLDER $ENV_FOLDER
-        # rm -r $DEPLOY_FOLDER/$ENV_FOLDER -f
-        # mkdir $DEPLOY_FOLDER/$ENV_FOLDER
-        echo "wd: "$WORKING_DIR" pwd "$(pwd) 
         cd $WORKING_DIR
         flatten_tf $1
-     #   for tf_file in $(ls ${directory::-1}.tf | grep );
-     #   do 
-     #     mv 
-     #     mv ${directory::-1}.tf $DEPLOY_FOLDER/$ENV_FOLDER/;
-     #   done;
         rec_function_tfvars $1 $DEPLOY_FOLDER $ENV_FOLDER
         cd $WORKING_DIR
       else
         for envfile in $(ls $1/*.tf);
         do          	       
-          echo "file $envfile"
           ln -s $(readlink -f $envfile) $directory;      
         done;
         rec_function ${directory::-1};
