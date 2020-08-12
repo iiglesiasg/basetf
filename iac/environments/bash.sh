@@ -64,13 +64,14 @@ flatten_tf(){
   do
     full_path=$(echo "$link" | tr '/' '_')
     tf_name=$(echo ${full_path//$str_to_replace'_'})
-    mv $link $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
+    echo "link $link"
+    cp $(readlink -f $link) $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
   done;
   find $1 -type l | xargs rm
   for file in $1/*.tf;
   do
     tf_name=$(echo "$file" | tr '/' '_')
-    cp $file $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
+    mv $file $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
   done;
 }
 ## Subimos por los directorios mientras vamos propagando los tf. Cuando no se puede subir
