@@ -13,6 +13,7 @@ push_branch(){
   if [ $diff_number -gt 0 ];
     then
       git push --set-upstream origin "promotions_$2";
+      cd $WORKING_DIR;
     fi;
 }
 
@@ -26,7 +27,7 @@ push_branch(){
 #### push_branch: Comandos git.
 #### rec_function_tfvars: Llamada recursiva.
 rec_function_tfvars(){
-    echo "rec_function_tfvars arg1: $1 arg2: $2 arg3: $3 "
+    echo "rec_function_tfvars arg1: $1 arg2: $2 arg3: $3 pwd: $(pwd)"
     for filename in $(ls $1 | grep tfvars);
       do 
         echo "move $filename to "$2/$3/$1/;
