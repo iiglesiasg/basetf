@@ -57,7 +57,8 @@ prepare_branch(){
   mkdir -p $1/$2/$last_dir
 }
 
-## Aplanamos los TF en el repositorio destino, en la carpeta que le corresponde por ambiente. 
+## Aplanamos los TF en el repositorio destino, en la carpeta que le corresponde por ambiente. El nombre del
+## TF en destino contiene el environment. Para los punteros, vamos a copiar el TF real y no el puntero (readlink). 
 ## ARG:
 #### $1:Directorio de busqueda
 flatten_tf(){
@@ -75,7 +76,6 @@ flatten_tf(){
   do
     full_path_real_value=$(echo "$(readlink -f $file)" | tr '/' '_')
     tf_name=$(echo ${full_path_real_value//$str_to_replace'_'})
-    # tf_name=$(echo "$file" | tr '/' '_')
     cp $file $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
   done;
 }
@@ -98,7 +98,7 @@ rec_function()
     do     
       if [ $(echo "$directory" | tr '/' '_') = $(echo "$X" | tr '/' '_') ];
       then 
-        ENV_FOLDER=$(echo "$1" | tr '/' '_');
+        ENV_FOLDER=$(echo "$1" | cut -d '/' -f2- | tr '/' '_');
         WORKING_DIR=$(pwd)
         prepare_branch $DEPLOY_FOLDER $ENV_FOLDER
         cd $WORKING_DIR
