@@ -26,10 +26,10 @@ push_branch(){
 #### push_branch: Comandos git.
 #### rec_function_tfvars: Llamada recursiva.
 rec_function_tfvars(){
-  
+    echo "rec_function_tfvars arg1: $1 arg2: $2 arg3: $3 "
     for filename in $(ls $1 | grep tfvars);
       do 
-        echo "move to "$2/$3/$1/;
+        echo "move $filename to "$2/$3/$1/;
         mv $1/$filename $2/$3/$1/;
       done;   
       parent_folder=$(echo $1 | rev | cut -d '/' -f2- | rev );    
