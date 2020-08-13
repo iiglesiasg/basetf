@@ -17,6 +17,12 @@ push_branch(){
     fi;
 }
 
+copy_root_files(){
+  cp $WORKING_DIR/*.tf $1
+  cp $WORKING_DIR/*.tfvars $1
+  cp $WORKING_DIR/*.json $1
+}
+
 ## Bajamos por los directorios moviendo los TFVARS al repositorio destino, conservando la estructura del 
 ## repositorio origen.
 ## ARG:
@@ -35,6 +41,7 @@ rec_function_tfvars(){
       parent_folder=$(echo $1 | rev | cut -d '/' -f2- | rev );    
       if [ ${#1} -eq ${#parent_folder} ]; 
       then
+        copy_root_files $2/$3
         push_branch $2 $3;
       else
         rec_function_tfvars $parent_folder $2 $3;
@@ -71,7 +78,7 @@ prepare_branch(){
 ## ARG:
 #### $1:Directorio de busqueda
 flatten_tf(){
-  echo "flatten_tf arg1: $1 pwd "$(pwd)
+  echo "flatten_tf arg1: $1"
   str_to_replace=$(echo "$(pwd)" | tr '/' '_')
  # for link in $(ls -lrt $1/*.tf | grep ^l | awk '{print $9}');
  # do
