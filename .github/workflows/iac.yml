@@ -2,11 +2,7 @@
 name: IaC Workflow
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - "iac/**"
+  workflow_dispatch:
   pull_request:
     # Plan: master
     branches:

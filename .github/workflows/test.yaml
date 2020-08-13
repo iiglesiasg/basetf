@@ -2,6 +2,11 @@
 name: test Workflow
 
 on:
+  push:
+    branches:
+      - master
+    paths:
+      - "iac/**"
   workflow_dispatch:
 
 env:
