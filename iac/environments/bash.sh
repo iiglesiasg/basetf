@@ -12,7 +12,8 @@ push_branch(){
   diff_number=$(git diff --name-only master | wc -l)
   if [ $diff_number -gt 0 ];
     then
-      git push --set-upstream origin $2;
+      git push --set-upstream origin "promotions_$2";
+      cd $WORKING_DIR;
     fi;
 }
 
@@ -26,10 +27,9 @@ push_branch(){
 #### push_branch: Comandos git.
 #### rec_function_tfvars: Llamada recursiva.
 rec_function_tfvars(){
-  
+    echo "rec_function_tfvars arg1: $1 arg2: $2 arg3: $3 pwd: $(pwd)"
     for filename in $(ls $1 | grep tfvars);
-      do 
-        echo "move to "$2/$3/$1/;
+      do
         mv $1/$filename $2/$3/$1/;
       done;   
       parent_folder=$(echo $1 | rev | cut -d '/' -f2- | rev );    
@@ -44,39 +44,55 @@ rec_function_tfvars(){
 ## En el repositorio destino, borramos la rama destino en caso de haberla y la recreamos en base a master
 ## ARG:
 #### $1: Directorio que contiene el repositorio destino.
-#### $2: Nombre de la rama y carpeta a crear
+#### $2: Nombre de la carpeta a crear, tambien se infiere el nombre de la rama.
 prepare_branch(){
   echo "prepare_branch arg1: "$1" arg2: "$2
   cd $1
   git checkout master
-  git push origin --delete $2
-  git branch $2
-  git checkout $2
-  rm -r $1/$2 -f
+  # git push origin --delete $2
+  branch_name="promotions_$2"  
+  if [ $(git branch -a | grep "$(echo "$branch_name")" | wc -l) -eq 0 ]; 
+  then
+    git branch $branch_name
+    git checkout $branch_name;
+  else 
+    git checkout $branch_name
+    git pull;
+  fi;
+  # git branch $2
+  # git checkout $2
+  # rm -r $1/$2 -f
   last_dir=$(echo "$2" | tr '_' '/')
-  mkdir -p $1/$2/$last_dir
+  mkdir -p $1/$2/"environments/"$last_dir;
 }
 
+## Aplanamos los TF en el repositorio destino, en la carpeta que le corresponde por ambiente. El nombre del
+## TF en destino contiene el environment. Para los punteros, vamos a copiar el TF real y no el puntero (readlink). 
+## ARG:
+#### $1:Directorio de busqueda
 flatten_tf(){
-  echo "flatten_tf arg1: "$1
+  echo "flatten_tf arg1: $1 pwd "$(pwd)
   str_to_replace=$(echo "$(pwd)" | tr '/' '_')
-  for link in $(ls -lrt $1/*.tf | grep ^l | awk '{print $11}');
-  do
-    full_path=$(echo "$link" | tr '/' '_')
-    tf_name=$(echo ${full_path//$str_to_replace'_'})
-    mv $link $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
-  done;
-  find $1 -type l | xargs rm
+ # for link in $(ls -lrt $1/*.tf | grep ^l | awk '{print $9}');
+ # do
+ #   full_path=$(echo "$link" | tr '/' '_')
+ #   tf_name=$(echo ${full_path//$str_to_replace'_'})  
+ #   echo "fullpath: $full_path  tf_name: $tf_name"
+ #   cp $link $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
+ # done;
+ # find $1 -type l | xargs rm
   for file in $1/*.tf;
   do
-    tf_name=$(echo "$file" | tr '/' '_')
-    mv $file $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
+    full_path_real_value=$(echo "$(readlink -f $file)" | tr '/' '_')
+    tf_name=$(echo ${full_path_real_value//$str_to_replace'_'})
+    cp $file $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
   done;
 }
-## Subimos por los directorios mientras vamos propagando los tf. Cuando no se puede subir
-## mas directorios podemos inferir el environment(el path relativo desde que comenzamos a
-## iterar) que dara nombre a una carpeta y a una rama en el repositorio destino. En este
-## punto ya tenemos aplanados los archivos TF que volcamos sobre la carpeta creada.
+
+## Subimos por los directorios mientras vamos propagando los TF con punteros. Cuando no se puede subir
+## mas directorios se infiere el environment(el path relativo desde que comenzamos a
+## iterar) que da nombre a una carpeta y a una rama en el repositorio destino. Aplanamos los TF y
+## volcamos sobre la carpeta creada.
 ## ARG: 
 #### $1: Directorio desde donde comenzar a iterar. Debe ser 'environments' para la estructura actual
 ## CALL:
@@ -85,34 +101,22 @@ flatten_tf(){
 #### rec_function: Llamada recursiva
 rec_function() 
 {
-    X=$1/*/
-   # echo "X $X"    
+    echo "rec_function ARG1: $1"
+    X=$1/*/  
     for directory in $X;
-    do 
-    #  echo "directory $directory"
+    do     
       if [ $(echo "$directory" | tr '/' '_') = $(echo "$X" | tr '/' '_') ];
       then 
-        echo "fin root $directory and arg1: $1"
-        ENV_FOLDER=$(echo "$1" | tr '/' '_');
-        WORKING_DIR=$(pwd)
+        ENV_FOLDER=$(echo "$1" | cut -d '/' -f2- | tr '/' '_');        
         prepare_branch $DEPLOY_FOLDER $ENV_FOLDER
-        # rm -r $DEPLOY_FOLDER/$ENV_FOLDER -f
-        # mkdir $DEPLOY_FOLDER/$ENV_FOLDER
-        echo "wd: "$WORKING_DIR" pwd "$(pwd) 
         cd $WORKING_DIR
         flatten_tf $1
-     #   for tf_file in $(ls ${directory::-1}.tf | grep );
-     #   do 
-     #     mv 
-     #     mv ${directory::-1}.tf $DEPLOY_FOLDER/$ENV_FOLDER/;
-     #   done;
         rec_function_tfvars $1 $DEPLOY_FOLDER $ENV_FOLDER
         cd $WORKING_DIR
       else
         for envfile in $(ls $1/*.tf);
         do          	       
-          echo "file $envfile"
-          ln -s $envfile $directory;      
+          ln -s $(readlink -f $envfile) $directory;      
         done;
         rec_function ${directory::-1};
       fi;
@@ -121,4 +125,5 @@ rec_function()
 }
 
 cd iac
+WORKING_DIR=$(pwd)
 rec_function environments
