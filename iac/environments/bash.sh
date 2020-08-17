@@ -1,17 +1,22 @@
 #!/bin/bash
 DEPLOY_FOLDER=$1
-echo "DF "$DEPLOY_FOLDER
+WORKING_FOLDER=$2
+echo "DF "$DEPLOY_FOLDER" WF"$WORKING_FOLDER
 ## En caso de haber diferencias con la rama master, subimos la rama al repositorio.
 ## ARG:
 #### $1: Directorio que contiene el repositorio destino.
 #### $2: Nombre de la rama a subir.
 push_branch(){
   cd $1
-  git add .
-  git commit -m "(BOT) commit"
-  diff_number=$(git diff --name-only master | wc -l)
+  #diff_number=$(git diff --name-only master | wc -l)
+  diff_number=$(diff $WORKING_FOLDER/$2 ./$2 | wc -l)
+  echo "$(diff $WORKING_FOLDER/$2 ./$2)"
   if [ $diff_number -gt 0 ];
     then
+      rm -r $2 -f
+      mv $WORKING_FOLDER/$2 ./$2
+      git add .
+      git commit -m "(BOT) commit"
       git push --set-upstream origin "promotions_$2";
       cd $WORKING_DIR;
     fi;
@@ -36,12 +41,12 @@ rec_function_tfvars(){
     echo "rec_function_tfvars arg1: $1 arg2: $2 arg3: $3 pwd: $(pwd)"
     for filename in $(ls $1 | grep tfvars);
       do
-        mv $1/$filename $2/$3/$1/;
+        mv $1/$filename $WORKING_FOLDER/$3/$1/;
       done;   
       parent_folder=$(echo $1 | rev | cut -d '/' -f2- | rev );    
       if [ ${#1} -eq ${#parent_folder} ]; 
       then
-        copy_root_files $2/$3
+        copy_root_files $WORKING_FOLDER/$3
         push_branch $2 $3;
       else
         rec_function_tfvars $parent_folder $2 $3;
@@ -71,6 +76,7 @@ prepare_branch(){
   # rm -r $1/$2 -f
   last_dir=$(echo "$2" | tr '_' '/')
   mkdir -p $1/$2/"environments/"$last_dir;
+  mkdir -p $WORKING_FOLDER/$2/"environments/"$last_dir;
 }
 
 ## Aplanamos los TF en el repositorio destino, en la carpeta que le corresponde por ambiente. El nombre del
@@ -92,7 +98,8 @@ flatten_tf(){
   do
     full_path_real_value=$(echo "$(readlink -f $file)" | tr '/' '_')
     tf_name=$(echo ${full_path_real_value//$str_to_replace'_'})
-    cp $file $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
+    #cp $file $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
+    cp $file $WORKING_FOLDER/$ENV_FOLDER/$tf_name;
   done;
 }
 
