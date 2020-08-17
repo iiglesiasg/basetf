@@ -75,19 +75,25 @@ jobs:
           path: ${{ env.CONFIG_GIT_PATH }}
           fetch-depth: 0
 
+#      - name: 'Debug'
+#        run: |
+#          pwd
+#          ls -lsa configrepo
+#          printenv
+#          git config --global user.email "${{ env.USER_EMAIL }}"
+#          git config --global user.name "${{ env.GITHUB_ACTOR }}" 
 
       - name: 'Debug'
         run: |
           pwd
           ls -lsa configrepo
           printenv
+          git config --global user.name "${{ env.GITHUB_ACTOR }}" 
 
       - name: 'Magia'
         run: |
           mv iac/environments/bash.sh .
-          sudo chmod +x bash.sh
-          git config --global user.email "${{ env.USER_EMAIL }}"
-          git config --global user.name "${{ env.GITHUB_USERNAME }}"                    
+          sudo chmod +x bash.sh                   
           mkdir working_folder
           ./bash.sh $(pwd)/configrepo $(pwd)/working_folder 
                     

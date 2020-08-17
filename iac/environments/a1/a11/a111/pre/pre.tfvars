@@ -1,4 +1,4 @@
 # Environment vars
 environment = "pre" // environment: poc dev pre pro
 pepe        = "aitoraaaaaauaiiaaaa"
-pepe2       = "inigo5"
+pepe2       = "inigo6"
