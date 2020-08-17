@@ -9,8 +9,8 @@ echo "DF "$DEPLOY_FOLDER" WF"$WORKING_FOLDER
 push_branch(){
   cd $1
   #diff_number=$(git diff --name-only master | wc -l)
-  diff_number=$(diff $WORKING_FOLDER/$2 ./$2 | wc -l)
-  echo "Difffs $(diff $WORKING_FOLDER/$2 ./$2)"
+  diff_number=$(diff -rq $WORKING_FOLDER/$2 ./$2 | wc -l)
+  echo "Difffs $(diff -rq $WORKING_FOLDER/$2 ./$2)"
   if [ $diff_number -gt 0 ];
     then
       rm -r $2 -f
