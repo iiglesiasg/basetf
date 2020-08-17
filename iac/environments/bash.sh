@@ -10,7 +10,7 @@ push_branch(){
   cd $1
   #diff_number=$(git diff --name-only master | wc -l)
   diff_number=$(diff $WORKING_FOLDER/$2 ./$2 | wc -l)
-  echo "$(diff $WORKING_FOLDER/$2 ./$2)"
+  echo "Difffs $(diff $WORKING_FOLDER/$2 ./$2)"
   if [ $diff_number -gt 0 ];
     then
       rm -r $2 -f
