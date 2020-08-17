@@ -41,7 +41,7 @@ rec_function_tfvars(){
     echo "rec_function_tfvars arg1: $1 arg2: $2 arg3: $3 pwd: $(pwd)"
     for filename in $(ls $1 | grep tfvars);
       do
-        mv $1/$filename $WORKING_FOLDER/$3/$1/;
+        cp $1/$filename $WORKING_FOLDER/$3/$1/;
       done;   
       parent_folder=$(echo $1 | rev | cut -d '/' -f2- | rev );    
       if [ ${#1} -eq ${#parent_folder} ]; 
