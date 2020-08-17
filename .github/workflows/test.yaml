@@ -87,6 +87,7 @@ jobs:
           sudo chmod +x bash.sh
           git config --global user.email "${{ env.USER_EMAIL }}"
           git config --global user.name "${{ env.GITHUB_USERNAME }}"
+          git config pull.rebase false
           mkdir working_folder
           ./bash.sh $(pwd)/configrepo $(pwd)/working_folder 
                     
