@@ -86,8 +86,7 @@ jobs:
           mv iac/environments/bash.sh .
           sudo chmod +x bash.sh
           git config --global user.email "${{ env.USER_EMAIL }}"
-          git config --global user.name "${{ env.GITHUB_USERNAME }}"
-          git config pull.rebase false
+          git config --global user.name "${{ env.GITHUB_USERNAME }}"          
           mkdir working_folder
           ./bash.sh $(pwd)/configrepo $(pwd)/working_folder 
                     

@@ -60,6 +60,7 @@ rec_function_tfvars(){
 prepare_branch(){
   echo "prepare_branch arg1: "$1" arg2: "$2
   cd $1
+  git config pull.rebase false
   git checkout master
   # git push origin --delete $2
   branch_name="promotions_$2"  
