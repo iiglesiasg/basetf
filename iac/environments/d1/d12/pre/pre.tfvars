@@ -1,2 +1,2 @@
 # Environment vars
-environment = "inigo" // environment: poc dev pre pro
+environment = "inigo2" // environment: poc dev pre pro
