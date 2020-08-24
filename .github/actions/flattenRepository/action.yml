@@ -1,4 +1,4 @@
-name: 'FlattenRepository'
+name: 'flattenRepository'
 description: 'Flatten terraform files to target repo'
 inputs:
   DEPLOY_FOLDER:
@@ -16,8 +16,15 @@ outputs:
 runs:
   using: "composite"
   steps: 
-#    - run: echo Hello ${{ inputs.who-to-greet }}.
-#      shell: bash
+    - run: |
+        pwd
+        ls -lsa configrepo
+        printenv
+        git config --global user.name $GITHUB_ACTOR 
+        echo "action_path  ${{ github.action_path }}"
+        echo "::set-output name=DEPLOY_FOLDER::$(pwd)/configrepo"
+        echo "::set-output name=working-directory::$(pwd)/working_folder"
+      shell: bash
 #    - id: random-number-generator
 #      run: echo "::set-output name=random-id::$(echo $RANDOM)"
 #      shell: bash

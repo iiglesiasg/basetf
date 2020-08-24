@@ -1,0 +1,68 @@
+---
+name: Action Based Workflow
+
+on:
+  workflow_dispatch:
+
+env:
+  PROJECT_AUTO_TFVARS: 'project.auto.tfvars'
+  TF_WORKING_DIR: './iac'
+  ENVIRONMENTS_WORKING_DIR: './iac/environments/'
+  TF_ACTION_VERSION: '0.12.28'
+  TF_ENVIROMENTS_PATH: 'environments/'
+  CONFIG_GIT_REPO: 'iiglesiasg/basetfdeploy'
+  CONFIG_GIT_PATH: 'configrepo'
+  USER_EMAIL: 'aitorbalbas@gmail.com'
+  GITHUB_USERNAME: 'iiglesiasg'
+  BRANCH_PREFIX: 'promotions/'
+
+jobs:
+  validate_terraform:
+    name: Terraform
+    ## TODO: no latest!!!
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: 'Checkout Repo'
+        uses: actions/checkout@v2.3.1
+        with:
+          # Fetch all history for all tags and branches
+          fetch-depth: 0
+
+      - name: 'Checkout the other Repo (environments real repo)'
+        uses: actions/checkout@v2.3.1
+        with:
+          # Workflows triggered by pull_request events will by default check out a merge commit. To prevent the merge commit being included in created pull requests it is necessary to checkout the head_ref.
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.ABP_PERSONAL_TOKEN }}
+          repository: ${{ env.CONFIG_GIT_REPO }}
+          path: ${{ env.CONFIG_GIT_PATH }}
+          fetch-depth: 0
+
+      - name: 'Debug'
+        run: |
+          pwd
+          ls -lsa configrepo
+          printenv
+          git config --global user.name $GITHUB_ACTOR 
+          echo "::set-output name=DEPLOY_FOLDER::$(pwd)/configrepo"
+          echo "::set-output name=working-directory::$(pwd)/working_folder"
+
+      - id: foo
+        uses: actions/magic@master
+        with:
+          DEPLOY_FOLDER: ${{ env.DEPLOY_FOLDER }}
+          working-directory: ${{ env.working-directory }}
+
+
+
+
+      - name: 'Magia'
+        run: |
+          mv iac/environments/bash.sh .
+          sudo chmod +x bash.sh                   
+          mkdir working_folder
+          ./bash.sh $(pwd)/configrepo $(pwd)/working_folder 
+                    
+           
