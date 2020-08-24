@@ -11,7 +11,7 @@ inputs:
     default: code
 outputs:
   random-number: 
-    description: "Random number"
+    description: "Rando m number"
 #    value: ${{ steps.random-number-generator.outputs.random-id }}
 runs:
   using: "composite"
