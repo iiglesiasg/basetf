@@ -51,7 +51,7 @@ jobs:
           echo "::set-output name=working-directory::$(pwd)/working_folder"
 
       - id: flatten
-        uses: iiglesiasg/bastf@master
+        uses: iiglesiasg/bastf@v1
         with:
           DEPLOY_FOLDER: ${{ env.DEPLOY_FOLDER }}
           working-directory: ${{ env.working-directory }}
