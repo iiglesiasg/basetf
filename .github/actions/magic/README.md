@@ -1,6 +1,14 @@
-# Hello world docker action
+# FlattenFiles Bash action
 
-This action prints "Hello World" or "Hello" + the name of a person to greet to the log.
+This action is meant to be triggered when a change to Master happens on the editable Base repository.
+
+###### REQUIREMENTS
+
+Base repository must be standarized as the organization terraform´s repository template. 
+
+## How it works
+
+<img src="../images/Flatten2.png" style="zoom:150%;" />
 
 ## Inputs
 
