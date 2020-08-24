@@ -8,7 +8,6 @@ echo "DF "$DEPLOY_FOLDER" WF"$WORKING_FOLDER
 #### $2: Nombre de la rama a subir.
 push_branch(){
   cd $1
-  #diff_number=$(git diff --name-only master | wc -l)
   diff_number=$(diff -rq $WORKING_FOLDER/$2 ./$2 | wc -l)
   echo "Difffs $(diff -rq $WORKING_FOLDER/$2 ./$2)"
   if [ $diff_number -gt 0 ];
@@ -53,7 +52,8 @@ rec_function_tfvars(){
       fi;
 }
 
-## En el repositorio destino, borramos la rama destino en caso de haberla y la recreamos en base a master
+## En el repositorio destino, si la rama no existe la creamos localmente, si la rama existe hacemos checkout a ella. 
+## Creamos la carpeta de trabajo.
 ## ARG:
 #### $1: Directorio que contiene el repositorio destino.
 #### $2: Nombre de la carpeta a crear, tambien se infiere el nombre de la rama.
@@ -62,7 +62,6 @@ prepare_branch(){
   cd $1
   git config pull.rebase false
   git checkout master
-  # git push origin --delete $2
   branch_name="promotions_$2"  
   if [ $(git branch -a | grep "$(echo "$branch_name")" | wc -l) -eq 0 ]; 
   then
@@ -72,9 +71,6 @@ prepare_branch(){
     git checkout $branch_name
     git pull;
   fi;
-  # git branch $2
-  # git checkout $2
-  # rm -r $1/$2 -f
   last_dir=$(echo "$2" | tr '_' '/')
   mkdir -p $1/$2/"environments/"$last_dir;
   mkdir -p $WORKING_FOLDER/$2/"environments/"$last_dir;
@@ -87,19 +83,10 @@ prepare_branch(){
 flatten_tf(){
   echo "flatten_tf arg1: $1"
   str_to_replace=$(echo "$(pwd)" | tr '/' '_')
- # for link in $(ls -lrt $1/*.tf | grep ^l | awk '{print $9}');
- # do
- #   full_path=$(echo "$link" | tr '/' '_')
- #   tf_name=$(echo ${full_path//$str_to_replace'_'})  
- #   echo "fullpath: $full_path  tf_name: $tf_name"
- #   cp $link $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
- # done;
- # find $1 -type l | xargs rm
   for file in $1/*.tf;
   do
     full_path_real_value=$(echo "$(readlink -f $file)" | tr '/' '_')
     tf_name=$(echo ${full_path_real_value//$str_to_replace'_'})
-    #cp $file $DEPLOY_FOLDER/$ENV_FOLDER/$tf_name;
     cp $file $WORKING_FOLDER/$ENV_FOLDER/$tf_name;
   done;
 }

@@ -10,7 +10,7 @@ Base repository must be standardized as the organization terraform´s repository
 
 [Working draw](https://drive.google.com/file/d/1ThemqxL_icve3-OA_oXW5QUPoEiSGAlz/view?usp=sharing)
 
-<img src="../images/Flatten2.png" style="zoom:150%;" />
+<img src="images/Flatten2.png" style="zoom:100%;" />
 
 ## Inputs
 
