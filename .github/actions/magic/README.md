@@ -4,9 +4,11 @@ This action is meant to be triggered when a change to Master happens on the edit
 
 ###### REQUIREMENTS
 
-Base repository must be standarized as the organization terraform´s repository template. 
+Base repository must be standardized as the organization terraform´s repository template. 
 
 ## How it works
+
+[Working draw](https://drive.google.com/file/d/1ThemqxL_icve3-OA_oXW5QUPoEiSGAlz/view?usp=sharing)
 
 <img src="../images/Flatten2.png" style="zoom:150%;" />
 
