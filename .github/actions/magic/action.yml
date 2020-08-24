@@ -1,16 +1,25 @@
-# action.yml
-name: 'Hello World'
-description: 'Greet someone and record the time'
+name: 'FlattenRepository'
+description: 'Flatten terraform files to target repo'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
+  DEPLOY_FOLDER:
+    description: 'DEPLOY FOLDER'
     required: true
-    default: 'World'
+    default: '$(pwd)/'
+  working-directory:
+    description: 'Working directory'
+    required: true
+    default: code
 outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+  random-number: 
+    description: "Random number"
+#    value: ${{ steps.random-number-generator.outputs.random-id }}
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  args:
-    - ${{ inputs.who-to-greet }}
+  using: "composite"
+  steps: 
+#    - run: echo Hello ${{ inputs.who-to-greet }}.
+#      shell: bash
+#    - id: random-number-generator
+#      run: echo "::set-output name=random-id::$(echo $RANDOM)"
+#      shell: bash
+    - run: ${{ github.action_path }}/flatten.sh
+      shell: bash    
