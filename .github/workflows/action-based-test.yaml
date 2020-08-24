@@ -45,18 +45,16 @@ jobs:
           pwd
           ls -lsa configrepo
           printenv
+          echo "action_path  ${{ github.action_path }}"
           git config --global user.name $GITHUB_ACTOR 
           echo "::set-output name=DEPLOY_FOLDER::$(pwd)/configrepo"
           echo "::set-output name=working-directory::$(pwd)/working_folder"
 
-      - id: foo
-        uses: actions/magic@master
+      - id: flatten
+        uses: iiglesiasg/bastf@v1
         with:
           DEPLOY_FOLDER: ${{ env.DEPLOY_FOLDER }}
           working-directory: ${{ env.working-directory }}
-
-
-
 
       - name: 'Magia'
         run: |
