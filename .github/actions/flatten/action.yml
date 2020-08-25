@@ -29,5 +29,5 @@ runs:
 #    - id: random-number-generator
 #      run: echo "::set-output name=random-id::$(echo $RANDOM)"
 #      shell: bash
-    - run: ${{ github.action_path }}/flatten.sh $DEPLOY_FOLDER $working-directory
+    - run: ${{ github.action_path }}/flatten.sh ${{ inputs.DEPLOY_FOLDER }} ${{ inputs.working-directory }}
       shell: bash    
