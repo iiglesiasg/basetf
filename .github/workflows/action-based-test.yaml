@@ -63,4 +63,3 @@ jobs:
           mkdir working_folder
           ./bash.sh $(pwd)/configrepo $(pwd)/working_folder 
                     
-           

@@ -96,7 +96,7 @@ flatten_tf(){
 ## iterar) que da nombre a una carpeta y a una rama en el repositorio destino. Aplanamos los TF y
 ## volcamos sobre la carpeta creada.
 ## ARG: 
-#### $1: Directorio desde donde comenzar a iterar. Debe ser 'environments' para la estructura actual
+#### $1: Directorio desde donde comenzar a iterar. Debe ser 'environments' para la estructura actual.
 ## CALL:
 #### prepare_branch: Comandos git
 #### rec_function_tfvars: Para mover los tfvars pero manteniendo la estructura de carpetas 
