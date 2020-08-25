@@ -15,10 +15,10 @@ env:
   ENVIRONMENTS_WORKING_DIR: './iac/environments/'
   TF_ACTION_VERSION: '0.12.28'
   TF_ENVIROMENTS_PATH: 'environments/'
-  CONFIG_GIT_REPO: 'iiglesiasg/basetfdeploy'
+  CONFIG_GIT_REPO: 'dborchers/basetfdeploy'
   CONFIG_GIT_PATH: 'configrepo'
   USER_EMAIL: 'aitorbalbas@gmail.com'
-  GITHUB_USERNAME: 'iiglesiasg'
+  GITHUB_USERNAME: 'dborchers'
 #  BRANCH_PREFIX: 'promotions/'
 
 jobs:
