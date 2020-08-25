@@ -33,7 +33,7 @@ Base repository must be standardized as the organization terraform´s repository
 ```yaml
 uses: ./.github/actions/flatten
 with:
-DEPLOY_FOLDER: ${{ steps.params.outputs.DEPLOY_FOLDER }} 
-working-directory: ${{ steps.params.outputs.working-directory }}
+  DEPLOY_FOLDER: ${{ steps.params.outputs.DEPLOY_FOLDER }} 
+  working-directory: ${{ steps.params.outputs.working-directory }}
 ```
 
