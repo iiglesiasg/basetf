@@ -4,15 +4,15 @@ inputs:
   DEPLOY_FOLDER:
     description: 'DEPLOY FOLDER'
     required: true
-    default: '$(pwd)/'
+    default: '$(pwd)/configfolder'
   working-directory:
     description: 'Working directory'
     required: true
-    default: '$(pwd)/iac'
+    default: '$(pwd)/'
 outputs:
-  random-number: 
+  ENV_FULL_PATH: 
     description: "Rando m number"
-#    value: ${{ steps.random-number-generator.outputs.random-id }}
+  
 runs:
   using: "composite"
   steps: 
