@@ -8,7 +8,7 @@ inputs:
   working-directory:
     description: 'Working directory'
     required: true
-    default: code
+    default: '$(pwd)/iac'
 outputs:
   random-number: 
     description: "Rando m number"
