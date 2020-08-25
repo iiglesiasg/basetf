@@ -41,18 +41,14 @@ jobs:
           fetch-depth: 0
 
       - name: 'Debug'
-        id: foo
+        id: params
         run: |
-          pwd
           ls -lsa configrepo
-          printenv
-          echo "action_path  ${{ github.action_path }}"
-          git config --global user.name $GITHUB_ACTOR 
           echo "::set-output name=DEPLOY_FOLDER::$(pwd)/configrepo"
           echo "::set-output name=working-directory::$(pwd)/working_folder"
 
       - id: flatten
         uses: ./.github/actions/flatten
         with:
-          DEPLOY_FOLDER: ${{ steps.foo.outputs.DEPLOY_FOLDER }} 
-          working-directory: ${{ steps.foo.outputs.working-directory }}
+          DEPLOY_FOLDER: ${{ steps.params.outputs.DEPLOY_FOLDER }} 
+          working-directory: ${{ steps.params.outputs.working-directory }}

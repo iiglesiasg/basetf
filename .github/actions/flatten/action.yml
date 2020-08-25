@@ -17,18 +17,8 @@ runs:
   using: "composite"
   steps: 
     - run: |
-        pwd
-        ls -lsa configrepo
-        printenv
         git config --global user.name $GITHUB_ACTOR 
-        echo "action_path  ${{ github.action_path }}"
-        echo " inputs ${{ inputs.DEPLOY_FOLDER }} ${{ inputs.working-directory }}"
         chmod +x ${{ github.action_path }}/flatten.sh
-        echo "::set-output name=DEPLOY_FOLDER::$(pwd)/configrepo"
-        echo "::set-output name=working-directory::$(pwd)/working_folder"
       shell: bash
-#    - id: random-number-generator
-#      run: echo "::set-output name=random-id::$(echo $RANDOM)"
-#      shell: bash
     - run: ${{ github.action_path }}/flatten.sh ${{ inputs.DEPLOY_FOLDER }} ${{ inputs.working-directory }}
       shell: bash    
