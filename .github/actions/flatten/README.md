@@ -14,18 +14,23 @@ Base repository must be standardized as the organization terraform´s repository
 
 ## Inputs
 
-### `who-to-greet`
+### `DEPLOY_FOLDER`
 
-**Required** The name of the person to greet. Default `"World"`.
+**Required** Deployment repository path on machine. Default `"$(pwd)/configfolder"`.
+
+### `working-directory`
+
+**Required** Terraform root folder. Default `'$(pwd)/iac'`.
 
 ## Outputs
 
-### `time`
+### `TODO`
 
-The time we greeted you.
+
 
 ## Example usage
 
-uses: actions/hello-world-docker-action@v1
+uses: ./.github/actions/flatten
 with:
-  who-to-greet: 'Mona the Octocat'
+DEPLOY_FOLDER: ${{ steps.params.outputs.DEPLOY_FOLDER }} 
+working-directory: ${{ steps.params.outputs.working-directory }}
