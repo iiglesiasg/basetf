@@ -41,6 +41,7 @@ jobs:
           fetch-depth: 0
 
       - name: 'Debug'
+        id: foo
         run: |
           pwd
           ls -lsa configrepo
@@ -53,13 +54,5 @@ jobs:
       - id: flatten
         uses: ./.github/actions/flatten
         with:
-          DEPLOY_FOLDER: ${{ env.DEPLOY_FOLDER }}
-          working-directory: ${{ env.working-directory }}
-
-      - name: 'Magia'
-        run: |
-          mv iac/environments/bash.sh .
-          sudo chmod +x bash.sh                   
-          mkdir working_folder
-          ./bash.sh $(pwd)/configrepo $(pwd)/working_folder 
-                    
+          DEPLOY_FOLDER: ${{ steps.foo.outputs.DEPLOY_FOLDER }} 
+          working-directory: ${{ steps.foo.outputs.working-directory }}
