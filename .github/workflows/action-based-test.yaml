@@ -1,7 +1,12 @@
 ---
-name: Action Based Workflow
+name: Local Action Based Workflow
 
 on:
+  push:
+    branches:
+      - master
+    paths:
+      - "iac/**"
   workflow_dispatch:
 
 env:
@@ -14,7 +19,7 @@ env:
   CONFIG_GIT_PATH: 'configrepo'
   USER_EMAIL: 'aitorbalbas@gmail.com'
   GITHUB_USERNAME: 'iiglesiasg'
-  BRANCH_PREFIX: 'promotions/'
+#  BRANCH_PREFIX: 'promotions/'
 
 jobs:
   validate_terraform:
@@ -46,6 +51,7 @@ jobs:
           ls -lsa configrepo
           echo "::set-output name=DEPLOY_FOLDER::$(pwd)/configrepo"
           echo "::set-output name=working-directory::$(pwd)/working_folder"
+
 
       - id: flatten
         uses: ./.github/actions/flatten

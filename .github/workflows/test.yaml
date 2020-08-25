@@ -1,12 +1,7 @@
 ---
-name: test Workflow
+name: Terraform IaC Workflow
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - "iac/**"
   workflow_dispatch:
 
 env:
