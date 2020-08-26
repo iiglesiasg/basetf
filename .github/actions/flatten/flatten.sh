@@ -22,9 +22,10 @@ push_branch(){
 }
 
 copy_root_files(){
-  cp $WORKING_DIR/*.tf $1
-  cp $WORKING_DIR/*.tfvars $1
-  cp $WORKING_DIR/*.json $1
+#  cp $WORKING_DIR/*.tf $1
+#  cp $WORKING_DIR/*.tfvars $1
+#  cp $WORKING_DIR/*.json $1
+  find $WORKING_DIR -maxdepth 1 ! -name 'environments' ! -path $WORKING_DIR -exec cp -r {} $1 \;
 }
 
 ## Bajamos por los directorios moviendo los TFVARS al repositorio destino, conservando la estructura del 
