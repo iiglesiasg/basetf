@@ -1,5 +1,5 @@
 ---
-name: Terraform IaC Workflow
+name: TEST Workflow
 
 on:
   workflow_dispatch:
