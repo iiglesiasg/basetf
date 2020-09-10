@@ -35,8 +35,7 @@ jobs:
       # Run Python
       - name: 'Run Python'
         run: |
-          ls
-          pwd
+          cd tests
           python test.py        
 
       # DEBUG
