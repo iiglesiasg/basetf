@@ -42,5 +42,4 @@ jobs:
       - name: 'DEBUG'
         run: |
           pwd
-          cd ..
           ls -lsaR iac/environments/zara   
