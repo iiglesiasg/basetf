@@ -35,7 +35,7 @@ jobs:
       # Run Python
       - name: 'Get files commited between two pushes (1+ commits)'
         run: |
-          cd test
+          ls
           pwd
           python test.py        
 
