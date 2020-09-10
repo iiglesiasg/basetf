@@ -1,0 +1,47 @@
+---
+name: Terraform IaC Workflow
+
+on:
+  workflow_dispatch:
+
+env:
+  PROJECT_AUTO_TFVARS: 'project.auto.tfvars'
+  TF_WORKING_DIR: './iac'
+  ENVIRONMENTS_WORKING_DIR: './iac/environments/'
+  TF_ACTION_VERSION: '0.12.28'
+  TF_ENVIROMENTS_PATH: 'environments/'
+  CONFIG_GIT_REPO: 'iiglesiasg/basetfdeploy'
+  CONFIG_GIT_PATH: 'configrepo'
+  USER_EMAIL: 'aitorbalbas@gmail.com'
+  GITHUB_USERNAME: 'iiglesiasg'
+  BRANCH_PREFIX: 'promotions/'
+
+jobs:
+  validate_terraform:
+    name: Terraform
+    ## TODO: no latest!!!
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: 'Checkout Repo'
+        uses: actions/checkout@v2.3.1
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'   
+
+      # Run Python
+      - name: 'Get files commited between two pushes (1+ commits)'
+        run: |
+          cd test
+          pwd
+          python test.py        
+
+      # DEBUG
+      - name: 'Get files commited between two pushes (1+ commits)'
+        run: |
+          pwd
+          cd ..
+          ls -lsaR iac/environments/zara   
