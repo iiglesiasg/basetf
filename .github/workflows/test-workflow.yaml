@@ -33,14 +33,14 @@ jobs:
           python-version: '3.x'   
 
       # Run Python
-      - name: 'Get files commited between two pushes (1+ commits)'
+      - name: 'Run Python'
         run: |
           ls
           pwd
           python test.py        
 
       # DEBUG
-      - name: 'Get files commited between two pushes (1+ commits)'
+      - name: 'DEBUG'
         run: |
           pwd
           cd ..
