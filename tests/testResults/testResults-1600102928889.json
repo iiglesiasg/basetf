@@ -1,0 +1,14 @@
+[{
+    "folder": "zara_weu_dev",
+    "file": "my_test",
+    "content": "inigorules"
+},{
+    "folder": "zara_weu_pre",
+    "file": "my_test",
+    "content": "inigorules"
+},{
+    "folder": "zara",
+    "file": "my_test_global",
+    "content": "inigorules"
+}
+]
